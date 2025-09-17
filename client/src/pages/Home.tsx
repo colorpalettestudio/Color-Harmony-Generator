@@ -5,7 +5,6 @@ import ColorInput from '@/components/ColorInput';
 import PaletteDisplay from '@/components/PaletteDisplay';
 import PaletteSizeControl from '@/components/PaletteSizeControl';
 import LightnessControl from '@/components/LightnessControl';
-import EyedropperTool from '@/components/EyedropperTool';
 import ThemeToggle from '@/components/ThemeToggle';
 import { generateHarmonyColors, getHarmonyHues } from '@/lib/colorHarmony';
 import { Palette } from 'lucide-react';
@@ -213,8 +212,6 @@ export default function Home() {
         </div>
       </main>
 
-      {/* Floating Eyedropper */}
-      <EyedropperTool onColorPick={handleColorChange} />
     </div>
   );
 }
