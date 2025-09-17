@@ -12,8 +12,8 @@ const harmonyOptions = [
   { value: 'analogous' as const, label: 'Analogous', description: 'Adjacent hues on color wheel' },
   { value: 'complementary' as const, label: 'Complementary', description: 'Opposite hues' },
   { value: 'triadic' as const, label: 'Triadic', description: 'Three evenly spaced hues' },
-  { value: 'rainbow' as const, label: 'Rainbow', description: 'Vibrant colors across entire spectrum' },
   { value: 'tetradic' as const, label: 'Tetradic', description: 'Four evenly spaced hues' },
+  { value: 'rainbow' as const, label: 'Rainbow', description: 'Vibrant colors across entire spectrum' },
 ];
 
 export default function HarmonySelector({ selectedHarmony, onHarmonyChange }: HarmonySelectorProps) {
