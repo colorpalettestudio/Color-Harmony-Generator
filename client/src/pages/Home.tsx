@@ -14,7 +14,7 @@ import chroma from 'chroma-js';
 export default function Home() {
   const [selectedColor, setSelectedColor] = useState('#ff6b6b');
   const [selectedHarmony, setSelectedHarmony] = useState<HarmonyType>('triadic');
-  const [paletteSize, setPaletteSize] = useState(4);
+  const [paletteSize, setPaletteSize] = useState(3); // Start with 3 for triadic
   const [colorLightness, setColorLightness] = useState(55);
 
   // Invert the lightness value so left (low values) = light colors and right (high values) = dark colors
@@ -48,9 +48,29 @@ export default function Home() {
     console.log('Base color changed to:', color);
   };
 
+  const getDefaultPaletteSize = (harmony: HarmonyType): number => {
+    switch (harmony) {
+      case 'complementary':
+        return 2; // Base color + complement
+      case 'triadic':
+        return 3; // 3 colors evenly spaced
+      case 'split-complementary':
+        return 3; // Base + 2 adjacent to complement
+      case 'tetradic':
+        return 4; // 4 colors forming square/rectangle
+      case 'analogous':
+        return 4; // Adjacent colors (3-5 typical)
+      case 'monochromatic':
+        return 5; // Variations of same hue
+      default:
+        return 4;
+    }
+  };
+
   const handleHarmonyChange = (harmony: HarmonyType) => {
     setSelectedHarmony(harmony);
-    console.log('Harmony changed to:', harmony);
+    setPaletteSize(getDefaultPaletteSize(harmony));
+    console.log('Harmony changed to:', harmony, 'with', getDefaultPaletteSize(harmony), 'colors');
   };
 
   const getHarmonyTitle = (harmony: HarmonyType) => {
