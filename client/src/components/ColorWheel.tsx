@@ -5,9 +5,10 @@ interface ColorWheelProps {
   selectedColor: string;
   onColorChange: (color: string) => void;
   size?: number;
+  harmonyHues?: number[];
 }
 
-export default function ColorWheel({ selectedColor, onColorChange, size = 300 }: ColorWheelProps) {
+export default function ColorWheel({ selectedColor, onColorChange, size = 300, harmonyHues = [] }: ColorWheelProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [currentHue, setCurrentHue] = useState(0);
@@ -30,7 +31,7 @@ export default function ColorWheel({ selectedColor, onColorChange, size = 300 }:
 
   useEffect(() => {
     drawColorWheel();
-  }, [currentHue, currentSaturation]);
+  }, [currentHue, currentSaturation, harmonyHues]);
 
   const drawColorWheel = () => {
     const canvas = canvasRef.current;
@@ -71,7 +72,34 @@ export default function ColorWheel({ selectedColor, onColorChange, size = 300 }:
     
     ctx.putImageData(imageData, 0, 0);
 
-    // Draw picker handle
+    // Draw harmony indicators (smaller circles)
+    harmonyHues.forEach((hue, index) => {
+      if (Math.abs(hue - currentHue) > 5) { // Don't draw if too close to main picker
+        const angle = (hue * Math.PI) / 180;
+        const indicatorRadius = (currentSaturation / 100) * radius;
+        const x = center + indicatorRadius * Math.cos(angle);
+        const y = center + indicatorRadius * Math.sin(angle);
+        
+        // Outer ring (white)
+        ctx.beginPath();
+        ctx.arc(x, y, 8, 0, 2 * Math.PI);
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+        
+        // Inner circle (black border + color fill)
+        ctx.beginPath();
+        ctx.arc(x, y, 6, 0, 2 * Math.PI);
+        ctx.strokeStyle = '#000000';
+        ctx.lineWidth = 1;
+        ctx.stroke();
+        const harmonyColor = chroma.hsl(hue, currentSaturation / 100, 0.5).hex();
+        ctx.fillStyle = harmonyColor;
+        ctx.fill();
+      }
+    });
+
+    // Draw main picker handle (largest)
     const pickerAngle = (currentHue * Math.PI) / 180;
     const pickerRadius = (currentSaturation / 100) * radius;
     const pickerX = center + pickerRadius * Math.cos(pickerAngle);

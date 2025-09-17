@@ -3,16 +3,19 @@ import ColorWheel from '@/components/ColorWheel';
 import HarmonySelector, { type HarmonyType } from '@/components/HarmonySelector';
 import ColorInput from '@/components/ColorInput';
 import PaletteDisplay from '@/components/PaletteDisplay';
+import PaletteSizeControl from '@/components/PaletteSizeControl';
 import EyedropperTool from '@/components/EyedropperTool';
 import ThemeToggle from '@/components/ThemeToggle';
-import { generateHarmonyColors } from '@/lib/colorHarmony';
+import { generateHarmonyColors, getHarmonyHues } from '@/lib/colorHarmony';
 import { Palette } from 'lucide-react';
 
 export default function Home() {
   const [selectedColor, setSelectedColor] = useState('#ff6b6b');
   const [selectedHarmony, setSelectedHarmony] = useState<HarmonyType>('triadic');
+  const [paletteSize, setPaletteSize] = useState(4);
 
-  const generatedColors = generateHarmonyColors(selectedColor, selectedHarmony);
+  const generatedColors = generateHarmonyColors(selectedColor, selectedHarmony, paletteSize);
+  const harmonyHues = getHarmonyHues(selectedColor, selectedHarmony);
 
   const handleColorChange = (color: string) => {
     setSelectedColor(color);
@@ -73,6 +76,7 @@ export default function Home() {
                 selectedColor={selectedColor}
                 onColorChange={handleColorChange}
                 size={320}
+                harmonyHues={harmonyHues}
               />
             </div>
 
@@ -81,6 +85,16 @@ export default function Home() {
               <ColorInput
                 value={selectedColor}
                 onChange={handleColorChange}
+              />
+            </div>
+
+            {/* Palette Size Control */}
+            <div>
+              <PaletteSizeControl
+                value={paletteSize}
+                onChange={setPaletteSize}
+                min={2}
+                max={8}
               />
             </div>
           </div>
