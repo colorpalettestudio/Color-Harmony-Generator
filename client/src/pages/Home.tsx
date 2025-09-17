@@ -34,22 +34,32 @@ export default function Home() {
   const baseGeneratedColors = generateHarmonyColors(selectedColor, selectedHarmony, paletteSize);
   
   // For monochromatic palettes, don't apply lightness control - let them span the full range
+  // For rainbow harmony, apply lightness to ALL colors for consistency across spectrum
   // For other harmonies, apply the lightness control to maintain consistency, but keep color #1 as the exact input
   const generatedColors = selectedHarmony === 'monochromatic' 
     ? baseGeneratedColors 
-    : baseGeneratedColors.map((color, index) => {
-        // Keep the first color (index 0) as the exact user input
-        if (index === 0) {
-          return color;
-        }
-        
-        try {
-          const hsl = chroma(color).hsl();
-          return chroma.hsl(hsl[0] || 0, hsl[1] || 0, actualLightness / 100).hex();
-        } catch {
-          return color;
-        }
-      });
+    : selectedHarmony === 'rainbow'
+      ? baseGeneratedColors.map(color => {
+          try {
+            const hsl = chroma(color).hsl();
+            return chroma.hsl(hsl[0] || 0, hsl[1] || 0, actualLightness / 100).hex();
+          } catch {
+            return color;
+          }
+        })
+      : baseGeneratedColors.map((color, index) => {
+          // Keep the first color (index 0) as the exact user input
+          if (index === 0) {
+            return color;
+          }
+          
+          try {
+            const hsl = chroma(color).hsl();
+            return chroma.hsl(hsl[0] || 0, hsl[1] || 0, actualLightness / 100).hex();
+          } catch {
+            return color;
+          }
+        });
   
   const harmonyHues = getHarmonyHues(selectedColor, selectedHarmony);
 
@@ -76,8 +86,8 @@ export default function Home() {
         return 2; // Base color + complement
       case 'triadic':
         return 3; // 3 colors evenly spaced
-      case 'split-complementary':
-        return 3; // Base + 2 adjacent to complement
+      case 'rainbow':
+        return 6; // Colors across entire spectrum
       case 'tetradic':
         return 4; // 4 colors forming square/rectangle
       case 'analogous':
@@ -101,7 +111,7 @@ export default function Home() {
       analogous: 'Analogous Harmony',
       complementary: 'Complementary Colors',
       triadic: 'Triadic Harmony',
-      'split-complementary': 'Split Complementary',
+      rainbow: 'Rainbow Spectrum',
       tetradic: 'Tetradic Square'
     };
     return titles[harmony];

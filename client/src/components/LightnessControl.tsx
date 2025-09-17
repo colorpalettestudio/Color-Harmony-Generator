@@ -9,7 +9,7 @@ interface LightnessControlProps {
 
 export default function LightnessControl({ value, onChange, displayValue }: LightnessControlProps) {
   // Use displayValue for descriptions and percentage, but value for the actual slider position
-  const effectiveLightness = displayValue || value;
+  const effectiveLightness = displayValue !== undefined ? displayValue : value;
   
   const getDescription = (lightness: number) => {
     if (lightness <= 30) return 'Very Dark - Deep, rich tones';

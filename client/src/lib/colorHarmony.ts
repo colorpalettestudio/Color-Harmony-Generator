@@ -22,8 +22,8 @@ export function generateHarmonyColors(baseColor: string, harmonyType: HarmonyTyp
       case 'triadic':
         return generateTriadic(hue, saturation, lightness, count);
       
-      case 'split-complementary':
-        return generateSplitComplementary(hue, saturation, lightness, count);
+      case 'rainbow':
+        return generateRainbow(hue, saturation, lightness, count);
       
       case 'tetradic':
         return generateTetradic(hue, saturation, lightness, count);
@@ -55,9 +55,13 @@ export function getHarmonyHues(baseColor: string, harmonyType: HarmonyType): num
       case 'triadic':
         return [hue, (hue + 120) % 360, (hue + 240) % 360];
       
-      case 'split-complementary':
-        const complementaryHue = (hue + 180) % 360;
-        return [hue, (complementaryHue + 30) % 360, (complementaryHue - 30 + 360) % 360];
+      case 'rainbow':
+        // Generate evenly spaced hues across the spectrum, starting from base hue
+        const rainbowHues = [];
+        for (let i = 0; i < 6; i++) {
+          rainbowHues.push((hue + i * 60) % 360);
+        }
+        return rainbowHues;
       
       case 'tetradic':
         return [hue, (hue + 90) % 360, (hue + 180) % 360, (hue + 270) % 360];
@@ -161,16 +165,14 @@ function generateTriadic(h: number, s: number, l: number, count: number): string
   return colors.map(clampColor);
 }
 
-function generateSplitComplementary(h: number, s: number, l: number, count: number): string[] {
-  const complementaryHue = (h + 180) % 360;
-  const hues = [h, (complementaryHue + 30) % 360, (complementaryHue - 30 + 360) % 360];
-  const colors = [chroma.hsl(h, s, l).hex()]; // Base
+function generateRainbow(h: number, s: number, l: number, count: number): string[] {
+  const colors = [chroma.hsl(h, s, l).hex()]; // Base color
   
+  // Generate colors at 60° intervals across the entire spectrum
   for (let i = 1; i < count; i++) {
-    const hueIndex = i % 3;
-    const variation = Math.floor((i - 1) / 3) * 0.15;
-    const currentHue = hues[hueIndex];
-    colors.push(chroma.hsl(currentHue, s * (1 - variation), l * (1 + variation * 0.2)).hex());
+    const hueStep = 360 / Math.max(count, 6); // At least 6 steps for full spectrum
+    const newHue = (h + i * hueStep) % 360;
+    colors.push(chroma.hsl(newHue, s, l).hex());
   }
   
   return colors.map(clampColor);

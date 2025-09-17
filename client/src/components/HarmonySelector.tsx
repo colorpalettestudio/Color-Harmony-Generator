@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui/button';
 
-export type HarmonyType = 'monochromatic' | 'analogous' | 'complementary' | 'triadic' | 'split-complementary' | 'tetradic';
+export type HarmonyType = 'monochromatic' | 'analogous' | 'complementary' | 'triadic' | 'rainbow' | 'tetradic';
 
 interface HarmonySelectorProps {
   selectedHarmony: HarmonyType;
@@ -12,7 +12,7 @@ const harmonyOptions = [
   { value: 'analogous' as const, label: 'Analogous', description: 'Adjacent hues on color wheel' },
   { value: 'complementary' as const, label: 'Complementary', description: 'Opposite hues' },
   { value: 'triadic' as const, label: 'Triadic', description: 'Three evenly spaced hues' },
-  { value: 'split-complementary' as const, label: 'Split Complementary', description: 'Base + two adjacent to complement' },
+  { value: 'rainbow' as const, label: 'Rainbow', description: 'Vibrant colors across entire spectrum' },
   { value: 'tetradic' as const, label: 'Tetradic', description: 'Four evenly spaced hues' },
 ];
 
