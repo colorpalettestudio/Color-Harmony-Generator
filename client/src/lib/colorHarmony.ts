@@ -71,16 +71,32 @@ export function getHarmonyHues(baseColor: string, harmonyType: HarmonyType): num
 }
 
 function generateMonochromatic(h: number, s: number, l: number, count: number): string[] {
-  const colors = [chroma.hsl(h, s, l).hex()]; // Base color always first
+  const colors = [];
   
-  for (let i = 1; i < count; i++) {
-    const factor = i / (count - 1);
-    if (i % 2 === 1) {
-      // Lighter variations
-      colors.push(chroma.hsl(h, s * (1 - factor * 0.5), l * (1 + factor * 0.4)).hex());
-    } else {
-      // Darker variations
-      colors.push(chroma.hsl(h, s * (1 + factor * 0.3), l * (1 - factor * 0.4)).hex());
+  // Create a range from very light to very dark with the base color in the middle
+  const lightnessRange = [0.15, 0.35, 0.5, 0.7, 0.85]; // Dark to light spectrum
+  const saturationRange = [0.8, 0.9, 1.0, 0.7, 0.5]; // Vary saturation for interest
+  
+  if (count <= 5) {
+    // For 5 or fewer colors, use predefined good positions
+    const positions = lightnessRange.slice(0, count);
+    const saturations = saturationRange.slice(0, count);
+    
+    for (let i = 0; i < count; i++) {
+      const adjustedSaturation = Math.min(1.0, s * saturations[i]);
+      colors.push(chroma.hsl(h, adjustedSaturation, positions[i]).hex());
+    }
+  } else {
+    // For more colors, distribute evenly across the lightness spectrum
+    for (let i = 0; i < count; i++) {
+      const lightnessFactor = i / (count - 1);
+      const targetLightness = 0.15 + (lightnessFactor * 0.7); // Range from 0.15 to 0.85
+      
+      // Vary saturation slightly for visual interest
+      const saturationVariation = 1.0 - (Math.abs(lightnessFactor - 0.5) * 0.3);
+      const adjustedSaturation = Math.min(1.0, s * saturationVariation);
+      
+      colors.push(chroma.hsl(h, adjustedSaturation, targetLightness).hex());
     }
   }
   
