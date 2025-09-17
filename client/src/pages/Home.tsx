@@ -4,6 +4,7 @@ import HarmonySelector, { type HarmonyType } from '@/components/HarmonySelector'
 import ColorInput from '@/components/ColorInput';
 import PaletteDisplay from '@/components/PaletteDisplay';
 import PaletteSizeControl from '@/components/PaletteSizeControl';
+import LightnessControl from '@/components/LightnessControl';
 import EyedropperTool from '@/components/EyedropperTool';
 import ThemeToggle from '@/components/ThemeToggle';
 import { generateHarmonyColors, getHarmonyHues } from '@/lib/colorHarmony';
@@ -13,6 +14,7 @@ export default function Home() {
   const [selectedColor, setSelectedColor] = useState('#ff6b6b');
   const [selectedHarmony, setSelectedHarmony] = useState<HarmonyType>('triadic');
   const [paletteSize, setPaletteSize] = useState(4);
+  const [colorLightness, setColorLightness] = useState(50);
 
   const generatedColors = generateHarmonyColors(selectedColor, selectedHarmony, paletteSize);
   const harmonyHues = getHarmonyHues(selectedColor, selectedHarmony);
@@ -77,6 +79,7 @@ export default function Home() {
                 onColorChange={handleColorChange}
                 size={320}
                 harmonyHues={harmonyHues}
+                lightness={colorLightness}
               />
             </div>
 
@@ -95,6 +98,14 @@ export default function Home() {
                 onChange={setPaletteSize}
                 min={2}
                 max={8}
+              />
+            </div>
+
+            {/* Lightness Control */}
+            <div>
+              <LightnessControl
+                value={colorLightness}
+                onChange={setColorLightness}
               />
             </div>
           </div>
@@ -122,8 +133,10 @@ export default function Home() {
               <h3 className="font-medium mb-3">How to Use</h3>
               <ul className="space-y-2 text-sm text-muted-foreground">
                 <li>• Drag the picker on the color wheel to select your base color</li>
+                <li>• Adjust lightness to create pastels (light) or deep tones (dark)</li>
                 <li>• Use the eyedropper tool to pick colors from your screen</li>
                 <li>• Choose a harmony rule to generate complementary colors</li>
+                <li>• Set your preferred palette size (2-8 colors)</li>
                 <li>• Click any color in the palette to copy it to your clipboard</li>
                 <li>• Switch between light and dark themes using the toggle</li>
               </ul>

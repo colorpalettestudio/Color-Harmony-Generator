@@ -6,9 +6,10 @@ interface ColorWheelProps {
   onColorChange: (color: string) => void;
   size?: number;
   harmonyHues?: number[];
+  lightness?: number;
 }
 
-export default function ColorWheel({ selectedColor, onColorChange, size = 300, harmonyHues = [] }: ColorWheelProps) {
+export default function ColorWheel({ selectedColor, onColorChange, size = 300, harmonyHues = [], lightness = 50 }: ColorWheelProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [currentHue, setCurrentHue] = useState(0);
@@ -31,7 +32,7 @@ export default function ColorWheel({ selectedColor, onColorChange, size = 300, h
 
   useEffect(() => {
     drawColorWheel();
-  }, [currentHue, currentSaturation, harmonyHues]);
+  }, [currentHue, currentSaturation, harmonyHues, lightness]);
 
   const drawColorWheel = () => {
     const canvas = canvasRef.current;
@@ -56,9 +57,9 @@ export default function ColorWheel({ selectedColor, onColorChange, size = 300, h
           const angle = Math.atan2(dy, dx) * (180 / Math.PI);
           const hue = (angle + 360) % 360;
           const saturation = distance / radius;
-          const lightness = 0.5;
+          const lightnessDecimal = lightness / 100;
           
-          const color = chroma.hsl(hue, saturation, lightness);
+          const color = chroma.hsl(hue, saturation, lightnessDecimal);
           const [r, g, b] = color.rgb();
           
           const index = (y * size + x) * 4;
@@ -93,7 +94,7 @@ export default function ColorWheel({ selectedColor, onColorChange, size = 300, h
         ctx.strokeStyle = '#000000';
         ctx.lineWidth = 1;
         ctx.stroke();
-        const harmonyColor = chroma.hsl(hue, currentSaturation / 100, 0.5).hex();
+        const harmonyColor = chroma.hsl(hue, currentSaturation / 100, lightness / 100).hex();
         ctx.fillStyle = harmonyColor;
         ctx.fill();
       }
@@ -150,7 +151,7 @@ export default function ColorWheel({ selectedColor, onColorChange, size = 300, h
     setCurrentHue(hue);
     setSaturation(saturation);
 
-    const newColor = chroma.hsl(hue, saturation / 100, 0.5).hex();
+    const newColor = chroma.hsl(hue, saturation / 100, lightness / 100).hex();
     onColorChange(newColor);
   };
 
