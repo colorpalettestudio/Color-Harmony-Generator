@@ -31,7 +31,11 @@ export default function HarmonySelector({ selectedHarmony, onHarmonyChange }: Ha
           <Button
             key={option.value}
             variant={selectedHarmony === option.value ? 'default' : 'outline'}
-            className="h-auto p-3 text-left flex flex-col items-start space-y-1"
+            className={`h-auto p-3 text-left flex flex-col items-start space-y-1 ${
+              selectedHarmony === option.value 
+                ? 'bg-black hover:bg-black/90 text-white border-black' 
+                : ''
+            }`}
             data-testid={`harmony-${option.value}`}
             onClick={() => {
               onHarmonyChange(option.value);

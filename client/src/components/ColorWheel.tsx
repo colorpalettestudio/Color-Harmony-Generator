@@ -41,22 +41,35 @@ export default function ColorWheel({ selectedColor, onColorChange, size = 300 }:
 
     ctx.clearRect(0, 0, size, size);
 
-    // Draw color wheel
-    for (let angle = 0; angle < 360; angle += 2) {
-      for (let r = 0; r < radius; r += 2) {
-        const hue = angle;
-        const saturation = (r / radius) * 100;
-        const lightness = 50;
+    // Draw color wheel with smooth gradient
+    const imageData = ctx.createImageData(size, size);
+    const data = imageData.data;
+    
+    for (let x = 0; x < size; x++) {
+      for (let y = 0; y < size; y++) {
+        const dx = x - center;
+        const dy = y - center;
+        const distance = Math.sqrt(dx * dx + dy * dy);
         
-        const color = chroma.hsl(hue, saturation / 100, lightness / 100);
-        ctx.fillStyle = color.hex();
-        
-        const x = center + r * Math.cos((angle * Math.PI) / 180);
-        const y = center + r * Math.sin((angle * Math.PI) / 180);
-        
-        ctx.fillRect(x, y, 2, 2);
+        if (distance <= radius) {
+          const angle = Math.atan2(dy, dx) * (180 / Math.PI);
+          const hue = (angle + 360) % 360;
+          const saturation = distance / radius;
+          const lightness = 0.5;
+          
+          const color = chroma.hsl(hue, saturation, lightness);
+          const [r, g, b] = color.rgb();
+          
+          const index = (y * size + x) * 4;
+          data[index] = r;     // Red
+          data[index + 1] = g; // Green
+          data[index + 2] = b; // Blue
+          data[index + 3] = 255; // Alpha
+        }
       }
     }
+    
+    ctx.putImageData(imageData, 0, 0);
 
     // Draw picker handle
     const pickerAngle = (currentHue * Math.PI) / 180;
