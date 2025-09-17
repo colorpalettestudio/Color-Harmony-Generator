@@ -124,11 +124,11 @@ export default function Home() {
                 </p>
               </div>
               <ColorWheel
-                selectedColor={adjustedSelectedColor}
+                selectedColor={selectedHarmony === 'monochromatic' ? selectedColor : adjustedSelectedColor}
                 onColorChange={handleColorChange}
                 size={320}
                 harmonyHues={harmonyHues}
-                lightness={actualLightness}
+                lightness={selectedHarmony === 'monochromatic' ? (chroma(selectedColor).hsl()[2] || 0.5) * 100 : actualLightness}
               />
             </div>
 
@@ -144,7 +144,7 @@ export default function Home() {
             {/* Color Input */}
             <div>
               <ColorInput
-                value={adjustedSelectedColor}
+                value={selectedHarmony === 'monochromatic' ? selectedColor : adjustedSelectedColor}
                 onChange={handleColorChange}
               />
             </div>

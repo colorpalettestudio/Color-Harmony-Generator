@@ -73,30 +73,41 @@ export function getHarmonyHues(baseColor: string, harmonyType: HarmonyType): num
 function generateMonochromatic(h: number, s: number, l: number, count: number): string[] {
   const colors = [];
   
-  // Create a range from very light to very dark with the base color in the middle
-  const lightnessRange = [0.15, 0.35, 0.5, 0.7, 0.85]; // Dark to light spectrum
-  const saturationRange = [0.8, 0.9, 1.0, 0.7, 0.5]; // Vary saturation for interest
+  // Always start with the exact base color as #1
+  colors.push(chroma.hsl(h, s, l).hex());
   
-  if (count <= 5) {
-    // For 5 or fewer colors, use predefined good positions
-    const positions = lightnessRange.slice(0, count);
-    const saturations = saturationRange.slice(0, count);
+  // If we need more colors, generate variations
+  if (count > 1) {
+    // Create a range of lightness values excluding the base color's lightness
+    const lightnessRange = [0.15, 0.35, 0.5, 0.7, 0.85]; // Dark to light spectrum
+    const saturationRange = [0.8, 0.9, 1.0, 0.7, 0.5]; // Vary saturation for interest
     
-    for (let i = 0; i < count; i++) {
-      const adjustedSaturation = Math.min(1.0, s * saturations[i]);
-      colors.push(chroma.hsl(h, adjustedSaturation, positions[i]).hex());
-    }
-  } else {
-    // For more colors, distribute evenly across the lightness spectrum
-    for (let i = 0; i < count; i++) {
-      const lightnessFactor = i / (count - 1);
-      const targetLightness = 0.15 + (lightnessFactor * 0.7); // Range from 0.15 to 0.85
+    // Remove the lightness value closest to the base color to avoid duplicates
+    const baseIndex = lightnessRange.reduce((closest, curr, idx) => 
+      Math.abs(curr - l) < Math.abs(lightnessRange[closest] - l) ? idx : closest, 0);
+    
+    if (count <= 5) {
+      // For 5 or fewer colors, use predefined good positions (excluding base)
+      const availablePositions = lightnessRange.filter((_, idx) => idx !== baseIndex);
+      const availableSaturations = saturationRange.filter((_, idx) => idx !== baseIndex);
       
-      // Vary saturation slightly for visual interest
-      const saturationVariation = 1.0 - (Math.abs(lightnessFactor - 0.5) * 0.3);
-      const adjustedSaturation = Math.min(1.0, s * saturationVariation);
-      
-      colors.push(chroma.hsl(h, adjustedSaturation, targetLightness).hex());
+      for (let i = 1; i < count && i - 1 < availablePositions.length; i++) {
+        const adjustedSaturation = Math.min(1.0, s * availableSaturations[i - 1]);
+        colors.push(chroma.hsl(h, adjustedSaturation, availablePositions[i - 1]).hex());
+      }
+    } else {
+      // For more colors, distribute evenly across the lightness spectrum (excluding base)
+      for (let i = 1; i < count; i++) {
+        const lightnessFactor = i / count; // Adjust distribution
+        const targetLightness = 0.15 + (lightnessFactor * 0.7);
+        
+        // Skip if too close to base lightness
+        if (Math.abs(targetLightness - l) > 0.1) {
+          const saturationVariation = 1.0 - (Math.abs(lightnessFactor - 0.5) * 0.3);
+          const adjustedSaturation = Math.min(1.0, s * saturationVariation);
+          colors.push(chroma.hsl(h, adjustedSaturation, targetLightness).hex());
+        }
+      }
     }
   }
   
