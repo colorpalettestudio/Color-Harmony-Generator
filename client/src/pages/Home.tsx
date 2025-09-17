@@ -30,16 +30,21 @@ export default function Home() {
     }
   })();
   
-  // Generate colors with the current harmony but apply lightness to all of them
+  // Generate colors with the current harmony
   const baseGeneratedColors = generateHarmonyColors(selectedColor, selectedHarmony, paletteSize);
-  const generatedColors = baseGeneratedColors.map(color => {
-    try {
-      const hsl = chroma(color).hsl();
-      return chroma.hsl(hsl[0] || 0, hsl[1] || 0, actualLightness / 100).hex();
-    } catch {
-      return color;
-    }
-  });
+  
+  // For monochromatic palettes, don't apply lightness control - let them span the full range
+  // For other harmonies, apply the lightness control to maintain consistency
+  const generatedColors = selectedHarmony === 'monochromatic' 
+    ? baseGeneratedColors 
+    : baseGeneratedColors.map(color => {
+        try {
+          const hsl = chroma(color).hsl();
+          return chroma.hsl(hsl[0] || 0, hsl[1] || 0, actualLightness / 100).hex();
+        } catch {
+          return color;
+        }
+      });
   
   const harmonyHues = getHarmonyHues(selectedColor, selectedHarmony);
 
