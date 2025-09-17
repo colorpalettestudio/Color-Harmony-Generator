@@ -42,7 +42,7 @@ export default function LightnessControl({ value, onChange }: LightnessControlPr
                 }}
                 className="w-full h-2 bg-gradient-to-r from-gray-900 via-gray-500 to-gray-100 rounded-lg appearance-none cursor-pointer"
                 style={{
-                  background: 'linear-gradient(to right, #1f2937, #6b7280, #f3f4f6)',
+                  background: 'linear-gradient(to right, #f3f4f6, #6b7280, #1f2937)',
                 }}
                 data-testid="slider-lightness"
               />
@@ -73,8 +73,8 @@ export default function LightnessControl({ value, onChange }: LightnessControlPr
             </div>
             
             <div className="flex justify-between text-xs text-muted-foreground">
-              <span>Very Dark</span>
               <span>Very Light</span>
+              <span>Very Dark</span>
             </div>
             
             <p className="text-xs text-muted-foreground text-center">

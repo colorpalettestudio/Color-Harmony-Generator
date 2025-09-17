@@ -2,16 +2,27 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Copy, Check } from 'lucide-react';
+import { Copy, Check, Plus, Minus } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import chroma from 'chroma-js';
 
 interface PaletteDisplayProps {
   colors: string[];
   title: string;
+  paletteSize: number;
+  onPaletteSizeChange: (size: number) => void;
+  minSize?: number;
+  maxSize?: number;
 }
 
-export default function PaletteDisplay({ colors, title }: PaletteDisplayProps) {
+export default function PaletteDisplay({ 
+  colors, 
+  title, 
+  paletteSize,
+  onPaletteSizeChange,
+  minSize = 2,
+  maxSize = 8
+}: PaletteDisplayProps) {
   const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
   const { toast } = useToast();
 
@@ -77,16 +88,44 @@ export default function PaletteDisplay({ colors, title }: PaletteDisplayProps) {
               {colors.length} colors generated
             </p>
           </div>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={copyAllColors}
-            className="gap-2"
-            data-testid="button-copy-all"
-          >
-            <Copy className="w-4 h-4" />
-            Copy All
-          </Button>
+          <div className="flex items-center gap-3">
+            {/* Palette Size Control */}
+            <div className="flex items-center gap-2">
+              <Button
+                variant="outline"
+                size="icon"
+                onClick={() => onPaletteSizeChange(Math.max(minSize, paletteSize - 1))}
+                disabled={paletteSize <= minSize}
+                className="h-8 w-8"
+                data-testid="button-decrease-size"
+              >
+                <Minus className="w-4 h-4" />
+              </Button>
+              <span className="text-sm font-medium w-8 text-center">
+                {paletteSize}
+              </span>
+              <Button
+                variant="outline"
+                size="icon"
+                onClick={() => onPaletteSizeChange(Math.min(maxSize, paletteSize + 1))}
+                disabled={paletteSize >= maxSize}
+                className="h-8 w-8"
+                data-testid="button-increase-size"
+              >
+                <Plus className="w-4 h-4" />
+              </Button>
+            </div>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={copyAllColors}
+              className="gap-2"
+              data-testid="button-copy-all"
+            >
+              <Copy className="w-4 h-4" />
+              Copy All
+            </Button>
+          </div>
         </div>
       </CardHeader>
       <CardContent className="space-y-4">

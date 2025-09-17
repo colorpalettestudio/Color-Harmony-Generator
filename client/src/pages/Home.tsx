@@ -14,7 +14,7 @@ export default function Home() {
   const [selectedColor, setSelectedColor] = useState('#ff6b6b');
   const [selectedHarmony, setSelectedHarmony] = useState<HarmonyType>('triadic');
   const [paletteSize, setPaletteSize] = useState(4);
-  const [colorLightness, setColorLightness] = useState(50);
+  const [colorLightness, setColorLightness] = useState(55);
 
   const generatedColors = generateHarmonyColors(selectedColor, selectedHarmony, paletteSize);
   const harmonyHues = getHarmonyHues(selectedColor, selectedHarmony);
@@ -99,15 +99,6 @@ export default function Home() {
               />
             </div>
 
-            {/* Palette Size Control */}
-            <div>
-              <PaletteSizeControl
-                value={paletteSize}
-                onChange={setPaletteSize}
-                min={2}
-                max={8}
-              />
-            </div>
           </div>
 
           {/* Right Panel - Harmony & Results */}
@@ -125,6 +116,10 @@ export default function Home() {
               <PaletteDisplay
                 colors={generatedColors}
                 title={getHarmonyTitle(selectedHarmony)}
+                paletteSize={paletteSize}
+                onPaletteSizeChange={setPaletteSize}
+                minSize={2}
+                maxSize={8}
               />
             </div>
 
