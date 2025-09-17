@@ -9,6 +9,7 @@ import EyedropperTool from '@/components/EyedropperTool';
 import ThemeToggle from '@/components/ThemeToggle';
 import { generateHarmonyColors, getHarmonyHues } from '@/lib/colorHarmony';
 import { Palette } from 'lucide-react';
+import chroma from 'chroma-js';
 
 export default function Home() {
   const [selectedColor, setSelectedColor] = useState('#ff6b6b');
@@ -16,7 +17,30 @@ export default function Home() {
   const [paletteSize, setPaletteSize] = useState(4);
   const [colorLightness, setColorLightness] = useState(55);
 
-  const generatedColors = generateHarmonyColors(selectedColor, selectedHarmony, paletteSize);
+  // Invert the lightness value so left (low values) = light colors and right (high values) = dark colors
+  const actualLightness = 110 - colorLightness;
+  
+  // Apply lightness to the selected color
+  const adjustedSelectedColor = (() => {
+    try {
+      const hsl = chroma(selectedColor).hsl();
+      return chroma.hsl(hsl[0] || 0, hsl[1] || 0, actualLightness / 100).hex();
+    } catch {
+      return selectedColor;
+    }
+  })();
+  
+  // Generate colors with the current harmony but apply lightness to all of them
+  const baseGeneratedColors = generateHarmonyColors(selectedColor, selectedHarmony, paletteSize);
+  const generatedColors = baseGeneratedColors.map(color => {
+    try {
+      const hsl = chroma(color).hsl();
+      return chroma.hsl(hsl[0] || 0, hsl[1] || 0, actualLightness / 100).hex();
+    } catch {
+      return color;
+    }
+  });
+  
   const harmonyHues = getHarmonyHues(selectedColor, selectedHarmony);
 
   const handleColorChange = (color: string) => {
@@ -75,11 +99,11 @@ export default function Home() {
                 </p>
               </div>
               <ColorWheel
-                selectedColor={selectedColor}
+                selectedColor={adjustedSelectedColor}
                 onColorChange={handleColorChange}
                 size={320}
                 harmonyHues={harmonyHues}
-                lightness={colorLightness}
+                lightness={actualLightness}
               />
             </div>
 
@@ -88,13 +112,14 @@ export default function Home() {
               <LightnessControl
                 value={colorLightness}
                 onChange={setColorLightness}
+                displayValue={actualLightness}
               />
             </div>
 
             {/* Color Input */}
             <div>
               <ColorInput
-                value={selectedColor}
+                value={adjustedSelectedColor}
                 onChange={handleColorChange}
               />
             </div>

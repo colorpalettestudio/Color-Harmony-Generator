@@ -4,9 +4,13 @@ import { Card, CardContent } from '@/components/ui/card';
 interface LightnessControlProps {
   value: number;
   onChange: (value: number) => void;
+  displayValue?: number; // The actual lightness value to display (after inversion)
 }
 
-export default function LightnessControl({ value, onChange }: LightnessControlProps) {
+export default function LightnessControl({ value, onChange, displayValue }: LightnessControlProps) {
+  // Use displayValue for descriptions and percentage, but value for the actual slider position
+  const effectiveLightness = displayValue || value;
+  
   const getDescription = (lightness: number) => {
     if (lightness <= 30) return 'Very Dark - Deep, rich tones';
     if (lightness <= 40) return 'Dark - Bold colors';
@@ -23,7 +27,7 @@ export default function LightnessControl({ value, onChange }: LightnessControlPr
           <div className="flex items-center justify-between">
             <Label className="text-sm font-medium">Color Lightness</Label>
             <span className="text-xs font-mono bg-muted px-2 py-1 rounded">
-              {value}%
+              {Math.round(effectiveLightness)}%
             </span>
           </div>
           
@@ -78,7 +82,7 @@ export default function LightnessControl({ value, onChange }: LightnessControlPr
             </div>
             
             <p className="text-xs text-muted-foreground text-center">
-              {getDescription(value)}
+              {getDescription(effectiveLightness)}
             </p>
           </div>
         </div>
