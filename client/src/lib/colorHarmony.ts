@@ -90,28 +90,35 @@ function generateMonochromatic(h: number, s: number, l: number, count: number): 
     const baseIndex = lightnessRange.reduce((closest, curr, idx) => 
       Math.abs(curr - l) < Math.abs(lightnessRange[closest] - l) ? idx : closest, 0);
     
-    if (count <= 5) {
-      // For 5 or fewer colors, use predefined good positions (excluding base)
-      const availablePositions = lightnessRange.filter((_, idx) => idx !== baseIndex);
-      const availableSaturations = saturationRange.filter((_, idx) => idx !== baseIndex);
+    // Generate remaining colors by distributing across lightness spectrum
+    for (let i = 1; i < count; i++) {
+      let targetLightness;
+      let adjustedSaturation;
       
-      for (let i = 1; i < count && i - 1 < availablePositions.length; i++) {
-        const adjustedSaturation = Math.min(1.0, s * availableSaturations[i - 1]);
-        colors.push(chroma.hsl(h, adjustedSaturation, availablePositions[i - 1]).hex());
-      }
-    } else {
-      // For more colors, distribute evenly across the lightness spectrum (excluding base)
-      for (let i = 1; i < count; i++) {
-        const lightnessFactor = i / count; // Adjust distribution
-        const targetLightness = 0.15 + (lightnessFactor * 0.7);
+      if (count <= 5) {
+        // For 5 or fewer colors, use predefined good positions (excluding base)
+        const availablePositions = lightnessRange.filter((_, idx) => idx !== baseIndex);
+        const availableSaturations = saturationRange.filter((_, idx) => idx !== baseIndex);
         
-        // Skip if too close to base lightness
-        if (Math.abs(targetLightness - l) > 0.1) {
-          const saturationVariation = 1.0 - (Math.abs(lightnessFactor - 0.5) * 0.3);
-          const adjustedSaturation = Math.min(1.0, s * saturationVariation);
-          colors.push(chroma.hsl(h, adjustedSaturation, targetLightness).hex());
+        if (i - 1 < availablePositions.length) {
+          targetLightness = availablePositions[i - 1];
+          adjustedSaturation = Math.min(1.0, s * availableSaturations[i - 1]);
+        } else {
+          // Fallback for edge cases
+          targetLightness = 0.15 + ((i - 1) / (count - 1)) * 0.7;
+          adjustedSaturation = Math.max(0.3, s * (1 - (i - 1) * 0.1));
         }
+      } else {
+        // For more colors, distribute evenly across the full lightness spectrum
+        const lightnessFactor = i / count;
+        targetLightness = 0.1 + (lightnessFactor * 0.8); // Use full 0.1-0.9 range
+        
+        // Vary saturation for visual interest
+        const saturationVariation = 1.0 - (Math.abs(lightnessFactor - 0.5) * 0.2);
+        adjustedSaturation = Math.max(0.3, Math.min(1.0, s * saturationVariation));
       }
+      
+      colors.push(chroma.hsl(h, adjustedSaturation, targetLightness).hex());
     }
   }
   
