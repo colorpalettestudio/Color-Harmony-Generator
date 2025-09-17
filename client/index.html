@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
-    <title>Palette Pro - Color Harmony Generator</title>
+    <title>Color Harmony Generator</title>
     <meta name="description" content="Professional color palette generator for graphic designers with interactive color wheels and harmony formulas.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -12,6 +12,18 @@
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
+    
+    <!-- Shopify embed height reporting -->
+    <script>
+      // Run this whenever the layout changes (and on load)
+      function reportHeight() {
+        const h = document.documentElement.scrollHeight;
+        parent.postMessage({ type: "resize-embed", height: h }, "*");
+      }
+      window.addEventListener("load", reportHeight);
+      new ResizeObserver(reportHeight).observe(document.body);
+    </script>
+    
     <!-- This is a replit script which adds a banner on the top of the page when opened in development mode outside the replit environment -->
     <script type="text/javascript" src="https://replit.com/public/js/replit-dev-banner.js"></script>
   </body>
