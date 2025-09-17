@@ -33,10 +33,21 @@ export default function Home() {
   // Generate colors with the current harmony
   const baseGeneratedColors = generateHarmonyColors(selectedColor, selectedHarmony, paletteSize);
   
-  // For monochromatic palettes, don't apply lightness control - let them span the full range
+  // For monochromatic palettes, apply lightness to color #1 but let others span the full range
   // For all other harmonies, apply lightness to ALL colors for consistency with the lightness slider
   const generatedColors = selectedHarmony === 'monochromatic' 
-    ? baseGeneratedColors 
+    ? baseGeneratedColors.map((color, index) => {
+        // Apply lightness to color #1 for consistency, let others span full range
+        if (index === 0) {
+          try {
+            const hsl = chroma(color).hsl();
+            return chroma.hsl(hsl[0] || 0, hsl[1] || 0, actualLightness / 100).hex();
+          } catch {
+            return color;
+          }
+        }
+        return color; // Colors #2-5 keep their original lightness for variety
+      })
     : baseGeneratedColors.map(color => {
         try {
           const hsl = chroma(color).hsl();
