@@ -141,7 +141,7 @@ export default function Home() {
                 </p>
               </div>
               <ColorWheel
-                selectedColor={selectedHarmony === 'monochromatic' ? selectedColor : adjustedSelectedColor}
+                selectedColor={selectedColor}
                 onColorChange={handleColorChange}
                 size={320}
                 harmonyHues={harmonyHues}
