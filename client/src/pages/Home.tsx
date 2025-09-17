@@ -34,10 +34,15 @@ export default function Home() {
   const baseGeneratedColors = generateHarmonyColors(selectedColor, selectedHarmony, paletteSize);
   
   // For monochromatic palettes, don't apply lightness control - let them span the full range
-  // For other harmonies, apply the lightness control to maintain consistency
+  // For other harmonies, apply the lightness control to maintain consistency, but keep color #1 as the exact input
   const generatedColors = selectedHarmony === 'monochromatic' 
     ? baseGeneratedColors 
-    : baseGeneratedColors.map(color => {
+    : baseGeneratedColors.map((color, index) => {
+        // Keep the first color (index 0) as the exact user input
+        if (index === 0) {
+          return color;
+        }
+        
         try {
           const hsl = chroma(color).hsl();
           return chroma.hsl(hsl[0] || 0, hsl[1] || 0, actualLightness / 100).hex();
@@ -50,7 +55,19 @@ export default function Home() {
 
   const handleColorChange = (color: string) => {
     setSelectedColor(color);
-    console.log('Base color changed to:', color);
+    
+    // Update lightness control to match the inputted color's lightness
+    try {
+      const inputColor = chroma(color);
+      const [, , l] = inputColor.hsl();
+      const inputLightness = isNaN(l) ? 0.5 : l;
+      // Convert lightness to slider value (invert because slider is inverted)
+      const sliderValue = Math.round(110 - (inputLightness * 100));
+      setColorLightness(sliderValue);
+      console.log('Base color changed to:', color, 'lightness updated to:', Math.round(inputLightness * 100));
+    } catch {
+      console.log('Base color changed to:', color);
+    }
   };
 
   const getDefaultPaletteSize = (harmony: HarmonyType): number => {
