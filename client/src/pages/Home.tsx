@@ -83,6 +83,14 @@ export default function Home() {
               />
             </div>
 
+            {/* Lightness Control - Right below color wheel */}
+            <div>
+              <LightnessControl
+                value={colorLightness}
+                onChange={setColorLightness}
+              />
+            </div>
+
             {/* Color Input */}
             <div>
               <ColorInput
@@ -98,14 +106,6 @@ export default function Home() {
                 onChange={setPaletteSize}
                 min={2}
                 max={8}
-              />
-            </div>
-
-            {/* Lightness Control */}
-            <div>
-              <LightnessControl
-                value={colorLightness}
-                onChange={setColorLightness}
               />
             </div>
           </div>
