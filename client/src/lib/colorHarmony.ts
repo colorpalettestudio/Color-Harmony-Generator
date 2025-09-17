@@ -47,7 +47,7 @@ export function getHarmonyHues(baseColor: string, harmonyType: HarmonyType): num
         return [hue];
       
       case 'analogous':
-        return [hue, (hue + 30) % 360, (hue - 30 + 360) % 360];
+        return [hue, (hue + 30) % 360, (hue - 30 + 360) % 360, (hue + 60) % 360];
       
       case 'complementary':
         return [hue, (hue + 180) % 360];
