@@ -124,8 +124,8 @@ export default function Home() {
                 <Palette className="w-6 h-6 text-primary-foreground" />
               </div>
               <div>
-                <h1 className="text-xl font-semibold text-foreground">Palette Pro</h1>
-                <p className="text-sm text-muted-foreground">Color Harmony Generator</p>
+                <h1 className="text-xl font-semibold text-foreground">Color Harmony Generator</h1>
+                <p className="text-sm text-muted-foreground">Professional color palettes for designers</p>
               </div>
             </div>
             <ThemeToggle />
