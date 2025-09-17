@@ -15,11 +15,19 @@ export default function ColorInput({ value, onChange }: ColorInputProps) {
   const [rgbValues, setRgbValues] = useState({ r: 0, g: 0, b: 0 });
   const [hslValues, setHslValues] = useState({ h: 0, s: 0, l: 0 });
   const [currentTab, setCurrentTab] = useState('hex');
+  const [isEditing, setIsEditing] = useState(false);
 
   useEffect(() => {
     try {
       const color = chroma(value);
-      setHexValue(color.hex());
+      const newHex = color.hex().toLowerCase();
+      
+      // Only update hex value if user is not currently editing
+      // This prevents overriding user input during typing/formatting
+      if (!isEditing) {
+        setHexValue(newHex);
+      }
+      
       const [r, g, b] = color.rgb();
       setRgbValues({ r: Math.round(r), g: Math.round(g), b: Math.round(b) });
       const [h, s, l] = color.hsl();
@@ -31,7 +39,7 @@ export default function ColorInput({ value, onChange }: ColorInputProps) {
     } catch {
       // Invalid color, keep current values
     }
-  }, [value]);
+  }, [value, isEditing]);
 
   const updateColor = (newColor: string) => {
     try {
@@ -44,9 +52,76 @@ export default function ColorInput({ value, onChange }: ColorInputProps) {
   };
 
   const handleHexChange = (hex: string) => {
+    // Always update the local state immediately for responsive typing
     setHexValue(hex);
-    if (hex.match(/^#[0-9A-Fa-f]{6}$/)) {
-      updateColor(hex);
+    
+    // Clean up the hex value - remove spaces and convert to lowercase
+    let cleanHex = hex.trim().toLowerCase();
+    
+    // Add # if missing
+    if (cleanHex && !cleanHex.startsWith('#')) {
+      cleanHex = '#' + cleanHex;
+    }
+    
+    // Check for valid hex patterns (3 or 6 characters after #)
+    const validHexPattern = /^#[0-9a-f]{3}$|^#[0-9a-f]{6}$/;
+    
+    if (cleanHex.match(validHexPattern)) {
+      try {
+        // Let chroma handle the conversion (it supports 3-char hex)
+        const color = chroma(cleanHex);
+        const fullHex = color.hex();
+        onChange(fullHex);
+        console.log('Color input changed to:', fullHex);
+        
+        // Don't auto-format while user is still typing
+        // Only format when they blur or complete a valid hex
+      } catch (error) {
+        // Invalid color even though it matched pattern
+        console.log('Invalid hex color:', cleanHex);
+      }
+    }
+  };
+
+  const handleHexFocus = () => {
+    setIsEditing(true);
+  };
+
+  const handleHexBlur = () => {
+    // On blur, format the hex properly
+    try {
+      let cleanHex = hexValue.trim().toLowerCase();
+      
+      // Add # if missing
+      if (cleanHex && !cleanHex.startsWith('#')) {
+        cleanHex = '#' + cleanHex;
+      }
+      
+      const validHexPattern = /^#[0-9a-f]{3}$|^#[0-9a-f]{6}$/;
+      
+      if (cleanHex.match(validHexPattern)) {
+        const color = chroma(cleanHex);
+        const fullHex = color.hex().toLowerCase();
+        setHexValue(fullHex); // Format to full 6-character hex
+        
+        // Make sure the color is applied
+        if (fullHex !== value.toLowerCase()) {
+          onChange(fullHex);
+          console.log('Color input formatted and changed to:', fullHex);
+        }
+      }
+    } catch (error) {
+      // If invalid, revert to current value
+      try {
+        const color = chroma(value);
+        setHexValue(color.hex().toLowerCase());
+      } catch {
+        // Last resort
+        setHexValue('#000000');
+      }
+    } finally {
+      // Always stop editing on blur
+      setIsEditing(false);
     }
   };
 
@@ -102,6 +177,8 @@ export default function ColorInput({ value, onChange }: ColorInputProps) {
                 id="hex-input"
                 value={hexValue}
                 onChange={(e) => handleHexChange(e.target.value)}
+                onFocus={handleHexFocus}
+                onBlur={handleHexBlur}
                 placeholder="#FF6B6B"
                 className="font-mono"
                 data-testid="input-hex"

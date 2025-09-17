@@ -144,7 +144,7 @@ export default function Home() {
             {/* Color Input */}
             <div>
               <ColorInput
-                value={selectedHarmony === 'monochromatic' ? selectedColor : adjustedSelectedColor}
+                value={selectedColor}
                 onChange={handleColorChange}
               />
             </div>
