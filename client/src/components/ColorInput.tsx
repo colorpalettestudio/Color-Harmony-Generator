@@ -1,8 +1,12 @@
 import { useState, useEffect } from 'react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent } from '@/components/ui/card';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import { Pipette } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
 import chroma from 'chroma-js';
 
 interface ColorInputProps {
@@ -14,8 +18,11 @@ export default function ColorInput({ value, onChange }: ColorInputProps) {
   const [hexValue, setHexValue] = useState('');
   const [rgbValues, setRgbValues] = useState({ r: 0, g: 0, b: 0 });
   const [hslValues, setHslValues] = useState({ h: 0, s: 0, l: 0 });
+  const [rgbString, setRgbString] = useState('0, 0, 0');
+  const [hslString, setHslString] = useState('0, 0%, 0%');
   const [currentTab, setCurrentTab] = useState('hex');
   const [isEditing, setIsEditing] = useState(false);
+  const { toast } = useToast();
 
   useEffect(() => {
     try {
@@ -29,13 +36,18 @@ export default function ColorInput({ value, onChange }: ColorInputProps) {
       }
       
       const [r, g, b] = color.rgb();
-      setRgbValues({ r: Math.round(r), g: Math.round(g), b: Math.round(b) });
+      const rgbVals = { r: Math.round(r), g: Math.round(g), b: Math.round(b) };
+      setRgbValues(rgbVals);
+      setRgbString(`${rgbVals.r}, ${rgbVals.g}, ${rgbVals.b}`);
+      
       const [h, s, l] = color.hsl();
-      setHslValues({ 
+      const hslVals = { 
         h: isNaN(h) ? 0 : Math.round(h), 
         s: Math.round((s || 0) * 100), 
         l: Math.round(l * 100) 
-      });
+      };
+      setHslValues(hslVals);
+      setHslString(`${hslVals.h}, ${hslVals.s}%, ${hslVals.l}%`);
     } catch {
       // Invalid color, keep current values
     }
@@ -125,26 +137,75 @@ export default function ColorInput({ value, onChange }: ColorInputProps) {
     }
   };
 
-  const handleRgbChange = (component: 'r' | 'g' | 'b', value: string) => {
-    const numValue = Math.max(0, Math.min(255, parseInt(value) || 0));
-    const newRgb = { ...rgbValues, [component]: numValue };
-    setRgbValues(newRgb);
-    updateColor(`rgb(${newRgb.r}, ${newRgb.g}, ${newRgb.b})`);
+  const handleRgbStringChange = (rgbStr: string) => {
+    setRgbString(rgbStr);
+    
+    // Parse RGB string like "255, 0, 0" or "255,0,0"
+    const values = rgbStr.split(',').map(v => v.trim());
+    if (values.length === 3) {
+      const [r, g, b] = values.map(v => {
+        const num = parseInt(v) || 0;
+        return Math.max(0, Math.min(255, num));
+      });
+      
+      try {
+        const newRgb = { r, g, b };
+        setRgbValues(newRgb);
+        updateColor(`rgb(${r}, ${g}, ${b})`);
+      } catch (error) {
+        console.log('Invalid RGB values:', rgbStr);
+      }
+    }
   };
 
-  const handleHslChange = (component: 'h' | 's' | 'l', value: string) => {
-    const numValue = parseInt(value) || 0;
-    let clampedValue = numValue;
+  const handleHslStringChange = (hslStr: string) => {
+    setHslString(hslStr);
     
-    if (component === 'h') {
-      clampedValue = Math.max(0, Math.min(360, numValue));
-    } else {
-      clampedValue = Math.max(0, Math.min(100, numValue));
+    // Parse HSL string like "360, 100%, 50%" or "360,100%,50%"
+    const values = hslStr.split(',').map(v => v.trim().replace('%', ''));
+    if (values.length === 3) {
+      const [h, s, l] = values.map((v, i) => {
+        const num = parseInt(v) || 0;
+        if (i === 0) return Math.max(0, Math.min(360, num)); // H
+        return Math.max(0, Math.min(100, num)); // S, L
+      });
+      
+      try {
+        const newHsl = { h, s, l };
+        setHslValues(newHsl);
+        updateColor(`hsl(${h}, ${s}%, ${l}%)`);
+      } catch (error) {
+        console.log('Invalid HSL values:', hslStr);
+      }
     }
-    
-    const newHsl = { ...hslValues, [component]: clampedValue };
-    setHslValues(newHsl);
-    updateColor(`hsl(${newHsl.h}, ${newHsl.s}%, ${newHsl.l}%)`);
+  };
+
+  const activateEyedropper = async () => {
+    // Check if EyeDropper API is supported
+    if (!('EyeDropper' in window)) {
+      toast({
+        description: 'Eyedropper not supported in this browser. Try Chrome or Edge.',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    try {
+      // @ts-ignore - EyeDropper API is experimental
+      const eyeDropper = new EyeDropper();
+      const result = await eyeDropper.open();
+      
+      if (result.sRGBHex) {
+        onChange(result.sRGBHex);
+        toast({
+          description: `Picked color: ${result.sRGBHex}`,
+        });
+        console.log('Eyedropper picked color:', result.sRGBHex);
+      }
+    } catch (error) {
+      // User cancelled or error occurred
+      console.log('Eyedropper cancelled or error:', error);
+    }
   };
 
   return (
@@ -173,105 +234,93 @@ export default function ColorInput({ value, onChange }: ColorInputProps) {
 
             <TabsContent value="hex" className="space-y-2">
               <Label htmlFor="hex-input" className="text-xs">Hexadecimal</Label>
-              <Input
-                id="hex-input"
-                value={hexValue}
-                onChange={(e) => handleHexChange(e.target.value)}
-                onFocus={handleHexFocus}
-                onBlur={handleHexBlur}
-                placeholder="#FF6B6B"
-                className="font-mono"
-                data-testid="input-hex"
-              />
+              <div className="flex gap-2">
+                <Input
+                  id="hex-input"
+                  value={hexValue}
+                  onChange={(e) => handleHexChange(e.target.value)}
+                  onFocus={handleHexFocus}
+                  onBlur={handleHexBlur}
+                  placeholder="#FF6B6B"
+                  className="font-mono flex-1"
+                  data-testid="input-hex"
+                />
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      onClick={activateEyedropper}
+                      className="shrink-0"
+                      data-testid="button-eyedropper-hex"
+                    >
+                      <Pipette className="w-4 h-4" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Pick color from screen</p>
+                  </TooltipContent>
+                </Tooltip>
+              </div>
             </TabsContent>
 
             <TabsContent value="rgb" className="space-y-2">
-              <Label className="text-xs">RGB Values</Label>
-              <div className="grid grid-cols-3 gap-2">
-                <div>
-                  <Label htmlFor="rgb-r" className="text-xs text-muted-foreground">R</Label>
-                  <Input
-                    id="rgb-r"
-                    type="number"
-                    min="0"
-                    max="255"
-                    value={rgbValues.r}
-                    onChange={(e) => handleRgbChange('r', e.target.value)}
-                    className="font-mono text-sm"
-                    data-testid="input-rgb-r"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="rgb-g" className="text-xs text-muted-foreground">G</Label>
-                  <Input
-                    id="rgb-g"
-                    type="number"
-                    min="0"
-                    max="255"
-                    value={rgbValues.g}
-                    onChange={(e) => handleRgbChange('g', e.target.value)}
-                    className="font-mono text-sm"
-                    data-testid="input-rgb-g"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="rgb-b" className="text-xs text-muted-foreground">B</Label>
-                  <Input
-                    id="rgb-b"
-                    type="number"
-                    min="0"
-                    max="255"
-                    value={rgbValues.b}
-                    onChange={(e) => handleRgbChange('b', e.target.value)}
-                    className="font-mono text-sm"
-                    data-testid="input-rgb-b"
-                  />
-                </div>
+              <Label htmlFor="rgb-input" className="text-xs">RGB Values</Label>
+              <div className="flex gap-2">
+                <Input
+                  id="rgb-input"
+                  value={rgbString}
+                  onChange={(e) => handleRgbStringChange(e.target.value)}
+                  placeholder="255, 0, 0"
+                  className="font-mono flex-1"
+                  data-testid="input-rgb"
+                />
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      onClick={activateEyedropper}
+                      className="shrink-0"
+                      data-testid="button-eyedropper-rgb"
+                    >
+                      <Pipette className="w-4 h-4" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Pick color from screen</p>
+                  </TooltipContent>
+                </Tooltip>
               </div>
             </TabsContent>
 
             <TabsContent value="hsl" className="space-y-2">
-              <Label className="text-xs">HSL Values</Label>
-              <div className="grid grid-cols-3 gap-2">
-                <div>
-                  <Label htmlFor="hsl-h" className="text-xs text-muted-foreground">H</Label>
-                  <Input
-                    id="hsl-h"
-                    type="number"
-                    min="0"
-                    max="360"
-                    value={hslValues.h}
-                    onChange={(e) => handleHslChange('h', e.target.value)}
-                    className="font-mono text-sm"
-                    data-testid="input-hsl-h"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="hsl-s" className="text-xs text-muted-foreground">S%</Label>
-                  <Input
-                    id="hsl-s"
-                    type="number"
-                    min="0"
-                    max="100"
-                    value={hslValues.s}
-                    onChange={(e) => handleHslChange('s', e.target.value)}
-                    className="font-mono text-sm"
-                    data-testid="input-hsl-s"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="hsl-l" className="text-xs text-muted-foreground">L%</Label>
-                  <Input
-                    id="hsl-l"
-                    type="number"
-                    min="0"
-                    max="100"
-                    value={hslValues.l}
-                    onChange={(e) => handleHslChange('l', e.target.value)}
-                    className="font-mono text-sm"
-                    data-testid="input-hsl-l"
-                  />
-                </div>
+              <Label htmlFor="hsl-input" className="text-xs">HSL Values</Label>
+              <div className="flex gap-2">
+                <Input
+                  id="hsl-input"
+                  value={hslString}
+                  onChange={(e) => handleHslStringChange(e.target.value)}
+                  placeholder="360, 100%, 50%"
+                  className="font-mono flex-1"
+                  data-testid="input-hsl"
+                />
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      onClick={activateEyedropper}
+                      className="shrink-0"
+                      data-testid="button-eyedropper-hsl"
+                    >
+                      <Pipette className="w-4 h-4" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Pick color from screen</p>
+                  </TooltipContent>
+                </Tooltip>
               </div>
             </TabsContent>
           </Tabs>
