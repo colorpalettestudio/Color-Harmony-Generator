@@ -191,17 +191,9 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Right Panel - Mobile: Show Harmony & Palette First */}
+          {/* Right Panel - Mobile: Show Palette First, Then Harmony Controls */}
           <div className="lg:col-span-3 space-y-4 lg:space-y-8 lg:order-last">
-            {/* Harmony Selector */}
-            <div>
-              <HarmonySelector
-                selectedHarmony={selectedHarmony}
-                onHarmonyChange={handleHarmonyChange}
-              />
-            </div>
-
-            {/* Generated Palette - Higher Priority on Mobile */}
+            {/* Generated Palette - Show Results First on Mobile */}
             <div>
               <PaletteDisplay
                 colors={generatedColors}
@@ -210,6 +202,14 @@ export default function Home() {
                 onPaletteSizeChange={setPaletteSize}
                 minSize={2}
                 maxSize={8}
+              />
+            </div>
+
+            {/* Harmony Selector - Controls Below Results on Mobile */}
+            <div>
+              <HarmonySelector
+                selectedHarmony={selectedHarmony}
+                onHarmonyChange={handleHarmonyChange}
               />
             </div>
 
