@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import ColorWheel from '@/components/ColorWheel';
 import HarmonySelector, { type HarmonyType } from '@/components/HarmonySelector';
 import ColorInput from '@/components/ColorInput';
@@ -15,6 +15,29 @@ export default function Home() {
   const [selectedHarmony, setSelectedHarmony] = useState<HarmonyType>('triadic');
   const [paletteSize, setPaletteSize] = useState(3); // Start with 3 for triadic
   const [colorLightness, setColorLightness] = useState(55);
+  const [wheelSize, setWheelSize] = useState(240);
+
+  // Handle responsive wheel sizing
+  useEffect(() => {
+    const handleResize = () => {
+      if (typeof window !== 'undefined') {
+        const width = window.innerWidth;
+        if (width < 640) {
+          setWheelSize(240);
+        } else if (width < 1024) {
+          setWheelSize(280);
+        } else {
+          setWheelSize(320);
+        }
+      }
+    };
+
+    handleResize();
+    if (typeof window !== 'undefined') {
+      window.addEventListener('resize', handleResize);
+      return () => window.removeEventListener('resize', handleResize);
+    }
+  }, []);
 
   // Invert the lightness value so left (low values) = light colors and right (high values) = dark colors
   const actualLightness = 110 - colorLightness;
@@ -117,14 +140,14 @@ export default function Home() {
       {/* Header */}
       <header className="border-b border-border bg-card">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            <div className="flex items-center space-x-3">
-              <div className="flex items-center justify-center w-10 h-10 bg-primary rounded-lg">
-                <Palette className="w-6 h-6 text-primary-foreground" />
+          <div className="flex items-center justify-between h-12 sm:h-16">
+            <div className="flex items-center space-x-2 sm:space-x-3">
+              <div className="flex items-center justify-center w-8 h-8 sm:w-10 sm:h-10 bg-primary rounded-lg">
+                <Palette className="w-4 h-4 sm:w-6 sm:h-6 text-primary-foreground" />
               </div>
               <div>
-                <h1 className="text-xl font-semibold text-foreground">Color Harmony Generator</h1>
-                <p className="text-sm text-muted-foreground">Professional color palettes for designers</p>
+                <h1 className="text-lg sm:text-xl font-semibold text-foreground">Color Harmony Generator</h1>
+                <p className="text-xs sm:text-sm text-muted-foreground hidden sm:block">Professional color palettes for designers</p>
               </div>
             </div>
             <ThemeToggle />
@@ -133,48 +156,43 @@ export default function Home() {
       </header>
 
       {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
-          {/* Left Panel - Color Selection */}
-          <div className="lg:col-span-2 space-y-8">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 lg:py-8">
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-4 lg:gap-8">
+          {/* Mobile: Compact Color Wheel + Controls */}
+          <div className="lg:col-span-2 space-y-4 lg:space-y-8">
             {/* Color Wheel */}
-            <div className="flex flex-col items-center space-y-6">
+            <div className="flex flex-col items-center space-y-3 lg:space-y-6">
               <div className="text-center">
-                <h2 className="text-lg font-semibold mb-2">Select Base Color</h2>
-                <p className="text-sm text-muted-foreground">
+                <h2 className="text-base lg:text-lg font-semibold mb-1 lg:mb-2">Select Base Color</h2>
+                <p className="text-xs lg:text-sm text-muted-foreground">
                   Drag the picker or use the eyedropper tool
                 </p>
               </div>
               <ColorWheel
                 selectedColor={selectedColor}
                 onColorChange={handleColorChange}
-                size={320}
+                size={wheelSize}
                 harmonyHues={harmonyHues}
                 lightness={selectedHarmony === 'monochromatic' ? (chroma(selectedColor).hsl()[2] || 0.5) * 100 : actualLightness}
               />
             </div>
 
-            {/* Lightness Control - Right below color wheel */}
-            <div>
+            {/* Compact Controls Row on Mobile */}
+            <div className="space-y-3 lg:space-y-6">
               <LightnessControl
                 value={colorLightness}
                 onChange={setColorLightness}
                 displayValue={actualLightness}
               />
-            </div>
-
-            {/* Color Input */}
-            <div>
               <ColorInput
                 value={selectedColor}
                 onChange={handleColorChange}
               />
             </div>
-
           </div>
 
-          {/* Right Panel - Harmony & Results */}
-          <div className="lg:col-span-3 space-y-8">
+          {/* Right Panel - Mobile: Show Harmony & Palette First */}
+          <div className="lg:col-span-3 space-y-4 lg:space-y-8 lg:order-last">
             {/* Harmony Selector */}
             <div>
               <HarmonySelector
@@ -183,7 +201,7 @@ export default function Home() {
               />
             </div>
 
-            {/* Generated Palette */}
+            {/* Generated Palette - Higher Priority on Mobile */}
             <div>
               <PaletteDisplay
                 colors={generatedColors}
@@ -195,10 +213,10 @@ export default function Home() {
               />
             </div>
 
-            {/* Instructions */}
-            <div className="bg-muted/50 rounded-lg p-6">
-              <h3 className="font-medium mb-3">How to Use</h3>
-              <ul className="space-y-2 text-sm text-muted-foreground">
+            {/* Instructions - Hidden on Small Mobile, Compact on Larger */}
+            <div className="hidden sm:block bg-muted/50 rounded-lg p-4 lg:p-6">
+              <h3 className="font-medium mb-2 lg:mb-3">How to Use</h3>
+              <ul className="space-y-1 lg:space-y-2 text-xs lg:text-sm text-muted-foreground">
                 <li>• Drag the picker on the color wheel to select your base color</li>
                 <li>• Adjust lightness to create pastels (light) or deep tones (dark)</li>
                 <li>• Use the eyedropper tool to pick colors from your screen</li>
