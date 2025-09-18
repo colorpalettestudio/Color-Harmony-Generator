@@ -143,11 +143,10 @@ export default function Home() {
           <div className="flex items-center justify-between h-12 sm:h-16">
             <div className="flex items-center space-x-2 sm:space-x-3">
               <div className="flex items-center justify-center w-8 h-8 sm:w-10 sm:h-10 bg-primary rounded-lg">
-                <Palette className="w-4 h-4 sm:w-6 sm:h-6 text-primary-foreground" />
+                <span className="text-lg sm:text-2xl">🎨</span>
               </div>
               <div>
-                <h1 className="text-lg sm:text-xl font-semibold text-foreground">Color Harmony Generator</h1>
-                <p className="text-xs sm:text-sm text-muted-foreground hidden sm:block">Professional color palettes for designers</p>
+                <h1 className="text-xl sm:text-3xl font-semibold text-foreground">Color Harmony Generator</h1>
               </div>
             </div>
             <ThemeToggle />
