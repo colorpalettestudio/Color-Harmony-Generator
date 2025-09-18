@@ -11,17 +11,17 @@
     :root { box-sizing: border-box; }
     *, *::before, *::after { box-sizing: inherit; }
 
-    /* Remove default margins and prevent internal scrollbars */
+    /* Reset margins and padding */
     html, body {
       margin: 0;
       padding: 0;
-      overflow: hidden;   /* critical: no inner scroll */
       height: auto;
     }
 
-    html, body { background: transparent; }
-
-    #root { min-height: 0; }
+    /* Only prevent overflow when embedded in Shopify */
+    html.shopify-embed, html.shopify-embed body {
+      overflow: hidden;
+    }
   </style>
   
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -62,6 +62,11 @@
       // Fonts can shift metrics after load
       if (document.fonts && document.fonts.ready) {
         document.fonts.ready.then(() => reportHeight());
+      }
+
+      // Detect if we're in a Shopify embed and add class
+      if (window.parent !== window) {
+        document.documentElement.classList.add('shopify-embed');
       }
 
       // Respond if parent asks
