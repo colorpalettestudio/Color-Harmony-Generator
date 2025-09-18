@@ -137,6 +137,36 @@ export default function ColorWheel({ selectedColor, onColorChange, size = 300, h
     setIsDragging(false);
   };
 
+  // Touch event handlers for mobile devices
+  const handleTouchStart = (e: React.TouchEvent) => {
+    e.preventDefault(); // Prevent scrolling
+    const touch = e.touches[0];
+    const rect = canvasRef.current?.getBoundingClientRect();
+    if (rect && touch) {
+      const x = touch.clientX - rect.left;
+      const y = touch.clientY - rect.top;
+      setIsDragging(true);
+      updateColor(x, y);
+    }
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    e.preventDefault(); // Prevent scrolling
+    if (!isDragging) return;
+    const touch = e.touches[0];
+    const rect = canvasRef.current?.getBoundingClientRect();
+    if (rect && touch) {
+      const x = touch.clientX - rect.left;
+      const y = touch.clientY - rect.top;
+      updateColor(x, y);
+    }
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    e.preventDefault(); // Prevent scrolling
+    setIsDragging(false);
+  };
+
   const updateColor = (x: number, y: number) => {
     const dx = x - center;
     const dy = y - center;
@@ -168,6 +198,9 @@ export default function ColorWheel({ selectedColor, onColorChange, size = 300, h
           onMouseDown={handleMouseDown}
           onMouseUp={handleMouseUp}
           onMouseLeave={handleMouseUp}
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={handleTouchEnd}
         />
       </div>
       <div className="text-center">
