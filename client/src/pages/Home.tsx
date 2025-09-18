@@ -11,10 +11,10 @@ import { Palette } from 'lucide-react';
 import chroma from 'chroma-js';
 
 export default function Home() {
-  const [selectedColor, setSelectedColor] = useState('#ff6b6b');
-  const [selectedHarmony, setSelectedHarmony] = useState<HarmonyType>('triadic');
-  const [paletteSize, setPaletteSize] = useState(3); // Start with 3 for triadic
-  const [colorLightness, setColorLightness] = useState(55);
+  const [selectedColor, setSelectedColor] = useState('#fc3649');
+  const [selectedHarmony, setSelectedHarmony] = useState<HarmonyType>('analogous');
+  const [paletteSize, setPaletteSize] = useState(4); // Start with 4 for analogous
+  const [colorLightness, setColorLightness] = useState(50); // 60% actual lightness (110-50=60)
   const [wheelSize, setWheelSize] = useState(240);
 
   // Handle responsive wheel sizing
