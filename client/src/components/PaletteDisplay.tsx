@@ -5,6 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { Copy, Check, Plus, Minus } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import chroma from 'chroma-js';
+import { copyToClipboard as copyToClipboardUtil } from '@/lib/clipboard';
 
 interface PaletteDisplayProps {
   colors: string[];
@@ -27,15 +28,16 @@ export default function PaletteDisplay({
   const { toast } = useToast();
 
   const copyToClipboard = async (color: string, index: number) => {
-    try {
-      await navigator.clipboard.writeText(color);
+    const success = await copyToClipboardUtil(color);
+    
+    if (success) {
       setCopiedIndex(index);
       setTimeout(() => setCopiedIndex(null), 1500);
       toast({
         description: `Copied ${color} to clipboard`,
       });
       console.log('Copied color:', color);
-    } catch (err) {
+    } else {
       toast({
         description: 'Failed to copy color',
         variant: 'destructive',
@@ -44,14 +46,15 @@ export default function PaletteDisplay({
   };
 
   const copyAllColors = async () => {
-    try {
-      const colorString = colors.join(', ');
-      await navigator.clipboard.writeText(colorString);
+    const colorString = colors.join(', ');
+    const success = await copyToClipboardUtil(colorString);
+    
+    if (success) {
       toast({
         description: `Copied ${colors.length} colors to clipboard`,
       });
       console.log('Copied all colors:', colorString);
-    } catch (err) {
+    } else {
       toast({
         description: 'Failed to copy colors',
         variant: 'destructive',
