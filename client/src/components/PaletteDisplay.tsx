@@ -158,7 +158,7 @@ export default function PaletteDisplay({
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="opacity-0 group-hover:opacity-100 transition-opacity h-8 w-8 p-0 hover:bg-black/20 text-current"
+                  className="h-8 w-8 p-0 hover:bg-black/20 text-current opacity-80 hover:opacity-100 transition-opacity"
                   onClick={() => copyToClipboard(color, index)}
                   data-testid={`button-copy-${index}`}
                 >
