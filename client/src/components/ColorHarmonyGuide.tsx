@@ -32,19 +32,6 @@ function HarmonyExample({ title, description, harmonyType, exampleColor }: Harmo
               />
             ))}
           </div>
-          
-          {/* Color Codes */}
-          <div className="flex flex-wrap gap-2">
-            {colors.map((color, index) => (
-              <div
-                key={index}
-                className="text-xs font-mono text-muted-foreground"
-                data-testid={`color-code-${index}`}
-              >
-                {color.toUpperCase()}
-              </div>
-            ))}
-          </div>
         </div>
       </CardContent>
     </Card>
