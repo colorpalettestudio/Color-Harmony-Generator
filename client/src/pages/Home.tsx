@@ -7,17 +7,18 @@ import PaletteSizeControl from '@/components/PaletteSizeControl';
 import LightnessControl from '@/components/LightnessControl';
 import ThemeToggle from '@/components/ThemeToggle';
 import { generateHarmonyColors, getHarmonyHues } from '@/lib/colorHarmony';
-import { Palette } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Sparkles } from 'lucide-react';
 import chroma from 'chroma-js';
 
 export default function Home() {
   const [selectedColor, setSelectedColor] = useState('#fc3649');
   const [selectedHarmony, setSelectedHarmony] = useState<HarmonyType>('analogous');
-  const [paletteSize, setPaletteSize] = useState(4); // Start with 4 for analogous
-  const [colorLightness, setColorLightness] = useState(50); // 60% actual lightness (110-50=60)
+  const [paletteSize, setPaletteSize] = useState(4);
+  const [colorLightness, setColorLightness] = useState(50);
   const [wheelSize, setWheelSize] = useState(240);
 
-  // Handle responsive wheel sizing
   useEffect(() => {
     const handleResize = () => {
       if (typeof window !== 'undefined') {
@@ -39,10 +40,8 @@ export default function Home() {
     }
   }, []);
 
-  // Invert the lightness value so left (low values) = light colors and right (high values) = dark colors
   const actualLightness = 110 - colorLightness;
   
-  // Apply lightness to the selected color
   const adjustedSelectedColor = (() => {
     try {
       const hsl = chroma(selectedColor).hsl();
@@ -52,14 +51,10 @@ export default function Home() {
     }
   })();
   
-  // Generate colors with the current harmony
   const baseGeneratedColors = generateHarmonyColors(selectedColor, selectedHarmony, paletteSize);
   
-  // For monochromatic palettes, apply lightness to color #1 but let others span the full range
-  // For all other harmonies, apply lightness to ALL colors for consistency with the lightness slider
   const generatedColors = selectedHarmony === 'monochromatic' 
     ? baseGeneratedColors.map((color, index) => {
-        // Apply lightness to color #1 for consistency, let others span full range
         if (index === 0) {
           try {
             const hsl = chroma(color).hsl();
@@ -68,7 +63,7 @@ export default function Home() {
             return color;
           }
         }
-        return color; // Colors #2-5 keep their original lightness for variety
+        return color;
       })
     : baseGeneratedColors.map(color => {
         try {
@@ -84,12 +79,10 @@ export default function Home() {
   const handleColorChange = (color: string) => {
     setSelectedColor(color);
     
-    // Update lightness control to match the inputted color's lightness
     try {
       const inputColor = chroma(color);
       const [, , l] = inputColor.hsl();
       const inputLightness = isNaN(l) ? 0.5 : l;
-      // Convert lightness to slider value (invert because slider is inverted)
       const sliderValue = Math.round(110 - (inputLightness * 100));
       setColorLightness(sliderValue);
       console.log('Base color changed to:', color, 'lightness updated to:', Math.round(inputLightness * 100));
@@ -101,17 +94,17 @@ export default function Home() {
   const getDefaultPaletteSize = (harmony: HarmonyType): number => {
     switch (harmony) {
       case 'complementary':
-        return 2; // Base color + complement
+        return 2;
       case 'triadic':
-        return 3; // 3 colors evenly spaced
+        return 3;
       case 'rainbow':
-        return 6; // Colors across entire spectrum
+        return 6;
       case 'tetradic':
-        return 4; // 4 colors forming square/rectangle
+        return 4;
       case 'analogous':
-        return 4; // Adjacent colors (3-5 typical)
+        return 4;
       case 'monochromatic':
-        return 5; // Variations of same hue
+        return 5;
       default:
         return 4;
     }
@@ -135,100 +128,277 @@ export default function Home() {
     return titles[harmony];
   };
 
+  const scrollToGenerator = () => {
+    const element = document.getElementById('generator');
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
+  const tryRandomColor = () => {
+    const randomColor = chroma.random().hex();
+    setSelectedColor(randomColor);
+    scrollToGenerator();
+  };
+
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="border-b border-border bg-card">
+      <header className="border-b border-border">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-12 sm:h-16">
-            <div className="flex items-center space-x-2 sm:space-x-3">
-              <div className="flex items-center justify-center w-8 h-8 sm:w-10 sm:h-10">
-                <span className="text-lg sm:text-2xl">🎨</span>
-              </div>
-              <div>
-                <h1 className="text-xl sm:text-3xl font-semibold text-foreground">Color Harmony Generator</h1>
-              </div>
+          <div className="flex items-center justify-between h-16">
+            <div className="flex items-center gap-2">
+              <h1 className="text-xl sm:text-2xl font-semibold text-foreground">Color Harmony Generator</h1>
             </div>
             <ThemeToggle />
           </div>
         </div>
       </header>
 
-      {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 lg:py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-5 gap-4 lg:gap-8">
-          {/* Mobile: Compact Color Wheel + Controls */}
-          <div className="lg:col-span-2 space-y-4 lg:space-y-8">
-            {/* Color Wheel */}
-            <div className="flex flex-col items-center space-y-3 lg:space-y-6">
-              <div className="text-center">
-                <h2 className="text-base lg:text-lg font-semibold mb-1 lg:mb-2">Select Base Color</h2>
-                <p className="text-xs lg:text-sm text-muted-foreground">
-                  Drag the picker or use the eyedropper tool
-                </p>
-              </div>
-              <ColorWheel
-                selectedColor={selectedColor}
-                onColorChange={handleColorChange}
-                size={wheelSize}
-                harmonyHues={harmonyHues}
-                lightness={selectedHarmony === 'monochromatic' ? (chroma(selectedColor).hsl()[2] || 0.5) * 100 : actualLightness}
-              />
-            </div>
-
-            {/* Compact Controls Row on Mobile */}
-            <div className="space-y-3 lg:space-y-6">
-              <LightnessControl
-                value={colorLightness}
-                onChange={setColorLightness}
-                displayValue={actualLightness}
-              />
-              <ColorInput
-                value={adjustedSelectedColor}
-                onChange={handleColorChange}
-              />
-            </div>
+      {/* Hero Section */}
+      <section className="border-b border-border">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 text-center">
+          <div className="mb-6">
+            <Badge variant="secondary" className="mb-4" data-testid="badge-free">
+              Free, Instant & No Sign-Up
+            </Badge>
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground mb-4">
+              Generate Perfect Color Palettes Instantly
+            </h2>
+            <p className="text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto">
+              Pick a base color and generate harmonious palettes using proven color theory rules. Copy colors instantly, adjust lightness, and create beautiful designs.
+            </p>
+          </div>
+          
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-8">
+            <Button 
+              size="lg" 
+              onClick={scrollToGenerator}
+              data-testid="button-start-generating"
+            >
+              <Sparkles className="w-4 h-4 mr-2" />
+              Start Generating
+            </Button>
+            <Button 
+              size="lg" 
+              variant="outline" 
+              onClick={tryRandomColor}
+              data-testid="button-try-random"
+            >
+              Try Random Color
+            </Button>
           </div>
 
-          {/* Right Panel - Mobile: Show Palette First, Then Harmony Controls */}
-          <div className="lg:col-span-3 space-y-4 lg:space-y-8 lg:order-last">
-            {/* Generated Palette - Show Results First on Mobile */}
-            <div>
-              <PaletteDisplay
-                colors={generatedColors}
-                title={getHarmonyTitle(selectedHarmony)}
-                paletteSize={paletteSize}
-                onPaletteSizeChange={setPaletteSize}
-                minSize={2}
-                maxSize={8}
-              />
+          {/* Benefits */}
+          <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-6 text-sm text-muted-foreground">
+            <div className="flex items-center gap-2">
+              <span className="text-lg">✓</span>
+              <span>Free & Instant</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-lg">✓</span>
+              <span>6 Harmony Rules</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-lg">✓</span>
+              <span>No Sign-Up Required</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Main Tool Section */}
+      <section id="generator" className="border-b border-border">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
+          <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 lg:gap-8">
+            {/* Left Panel - Color Wheel + Controls */}
+            <div className="lg:col-span-2 space-y-6">
+              <div className="flex flex-col items-center space-y-4">
+                <div className="text-center">
+                  <h3 className="text-lg font-semibold mb-2">Select Base Color</h3>
+                  <p className="text-sm text-muted-foreground">
+                    Drag the picker or use the eyedropper
+                  </p>
+                </div>
+                <ColorWheel
+                  selectedColor={selectedColor}
+                  onColorChange={handleColorChange}
+                  size={wheelSize}
+                  harmonyHues={harmonyHues}
+                  lightness={selectedHarmony === 'monochromatic' ? (chroma(selectedColor).hsl()[2] || 0.5) * 100 : actualLightness}
+                />
+              </div>
+
+              <div className="space-y-4">
+                <LightnessControl
+                  value={colorLightness}
+                  onChange={setColorLightness}
+                  displayValue={actualLightness}
+                />
+                <ColorInput
+                  value={adjustedSelectedColor}
+                  onChange={handleColorChange}
+                />
+              </div>
             </div>
 
-            {/* Harmony Selector - Controls Below Results on Mobile */}
+            {/* Right Panel - Palette + Harmony Selector */}
+            <div className="lg:col-span-3 space-y-6">
+              <div>
+                <PaletteDisplay
+                  colors={generatedColors}
+                  title={getHarmonyTitle(selectedHarmony)}
+                  paletteSize={paletteSize}
+                  onPaletteSizeChange={setPaletteSize}
+                  minSize={2}
+                  maxSize={8}
+                />
+              </div>
+
+              <div>
+                <HarmonySelector
+                  selectedHarmony={selectedHarmony}
+                  onHarmonyChange={handleHarmonyChange}
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* What It Is Section */}
+      <section className="border-b border-border bg-muted/30">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+          <h2 className="text-2xl sm:text-3xl font-bold text-foreground mb-6">
+            Free Color Harmony Generator
+          </h2>
+          <div className="space-y-4 text-muted-foreground">
+            <p>
+              The Color Harmony Generator is a free, fast tool for designers, developers, and brand owners to create professional color palettes using color theory. Select a base color and instantly generate harmonious combinations based on proven rules like analogous, complementary, triadic, and more.
+            </p>
+            <p>
+              Unlike basic color pickers, this tool applies real color theory to create palettes that actually work together. Adjust lightness, copy values instantly, and generate 2-8 color palettes for any design project.
+            </p>
+          </div>
+
+          <div className="mt-8 space-y-6">
             <div>
-              <HarmonySelector
-                selectedHarmony={selectedHarmony}
-                onHarmonyChange={handleHarmonyChange}
-              />
+              <h3 className="text-lg font-semibold mb-3">How to Use the Generator</h3>
+              <ol className="space-y-2 text-muted-foreground list-decimal list-inside">
+                <li>Pick a base color using the color wheel or paste a HEX/RGB/HSL value</li>
+                <li>Choose a harmony rule that fits your design needs</li>
+                <li>Adjust the lightness slider to create pastels or deep tones</li>
+                <li>Click any color in the palette to copy it instantly</li>
+              </ol>
             </div>
 
-            {/* Instructions - Hidden on Small Mobile, Compact on Larger */}
-            <div className="hidden sm:block bg-muted/50 rounded-lg p-4 lg:p-6">
-              <h3 className="font-medium mb-2 lg:mb-3">How to Use</h3>
-              <ul className="space-y-1 lg:space-y-2 text-xs lg:text-sm text-muted-foreground">
-                <li>• Drag the picker on the color wheel to select your base color</li>
-                <li>• Adjust lightness to create pastels (light) or deep tones (dark)</li>
-                <li>• Use the eyedropper tool to pick colors from your screen</li>
-                <li>• Choose a harmony rule to generate complementary colors</li>
-                <li>• Set your preferred palette size (2-8 colors)</li>
-                <li>• Click any color in the palette to copy it to your clipboard</li>
-                <li>• Switch between light and dark themes using the toggle</li>
+            <div>
+              <h3 className="text-lg font-semibold mb-3">Who It's For</h3>
+              <ul className="space-y-2 text-muted-foreground list-disc list-inside">
+                <li><strong>Designers</strong> creating brand palettes and UI color schemes</li>
+                <li><strong>Developers</strong> needing harmonious colors for web and app projects</li>
+                <li><strong>Brand owners</strong> establishing consistent visual identities</li>
+              </ul>
+            </div>
+
+            <div>
+              <h3 className="text-lg font-semibold mb-3">What You Can Do</h3>
+              <ul className="space-y-2 text-muted-foreground list-disc list-inside">
+                <li>Generate palettes using 6 different color harmony rules</li>
+                <li>Adjust lightness to create variations from pastels to deep tones</li>
+                <li>Copy colors in HEX, RGB, or HSL format instantly</li>
+                <li>Use the eyedropper to pick colors from your screen</li>
+                <li>Create 2-8 color palettes based on your needs</li>
               </ul>
             </div>
           </div>
         </div>
-      </main>
+      </section>
 
+      {/* FAQ Section */}
+      <section className="border-b border-border">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+          <h2 className="text-2xl sm:text-3xl font-bold text-foreground mb-8">
+            Color Harmony Generator: FAQ
+          </h2>
+          <div className="space-y-6">
+            <div>
+              <h3 className="text-lg font-semibold mb-2">What harmony rules are available?</h3>
+              <p className="text-muted-foreground">
+                The tool offers 6 harmony rules: Monochromatic (same hue, different lightness), Analogous (adjacent colors), Complementary (opposite colors), Triadic (three evenly spaced), Tetradic (four evenly spaced), and Rainbow (spectrum colors).
+              </p>
+            </div>
+            <div>
+              <h3 className="text-lg font-semibold mb-2">Can I adjust the number of colors?</h3>
+              <p className="text-muted-foreground">
+                Yes. You can generate between 2-8 colors in your palette. Each harmony rule has a recommended default size, but you can adjust it to fit your needs.
+              </p>
+            </div>
+            <div>
+              <h3 className="text-lg font-semibold mb-2">How do I copy colors?</h3>
+              <p className="text-muted-foreground">
+                Click any color swatch in the generated palette to copy it to your clipboard. You can copy individual colors or the entire palette at once. Colors are available in HEX, RGB, and HSL formats.
+              </p>
+            </div>
+            <div>
+              <h3 className="text-lg font-semibold mb-2">What is the eyedropper tool?</h3>
+              <p className="text-muted-foreground">
+                The eyedropper tool lets you pick any color from your screen to use as your base color. It works in modern browsers like Chrome and Edge.
+              </p>
+            </div>
+            <div>
+              <h3 className="text-lg font-semibold mb-2">Is the tool free?</h3>
+              <p className="text-muted-foreground">
+                Yes. The Color Harmony Generator is completely free and works without sign-up or registration.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Related Tools Section */}
+      <section className="border-b border-border bg-muted/30">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+          <h2 className="text-2xl font-bold text-foreground mb-6">
+            Explore More Color Tools
+          </h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            <a
+              href="https://www.thecolorcodeconverter.com/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="block p-6 border border-border rounded-lg hover-elevate active-elevate-2 bg-background"
+              data-testid="link-color-converter"
+            >
+              <h3 className="text-lg font-semibold mb-2">Color Code Converter</h3>
+              <p className="text-sm text-muted-foreground">
+                Convert HEX, RGB, and HSL values instantly
+              </p>
+            </a>
+            <a
+              href="https://www.colorpalettetester.com/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="block p-6 border border-border rounded-lg hover-elevate active-elevate-2 bg-background"
+              data-testid="link-palette-tester"
+            >
+              <h3 className="text-lg font-semibold mb-2">Color Palette Tester</h3>
+              <p className="text-sm text-muted-foreground">
+                Test color contrast for WCAG accessibility
+              </p>
+            </a>
+          </div>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="bg-card">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <div className="text-center text-sm text-muted-foreground">
+            <p>Color Harmony Generator - Free color palette tool for designers and developers</p>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }
