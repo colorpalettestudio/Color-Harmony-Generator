@@ -52,42 +52,45 @@ function HarmonyExample({ title, description, harmonyType, exampleColor }: Harmo
 }
 
 export default function ColorHarmonyGuide() {
+  // Use the same base color for all examples to make comparisons easier
+  const baseColor = '#3b82f6';
+  
   const harmonyExamples = [
     {
       title: 'Monochromatic',
       description: 'Uses a single hue with variations in lightness and saturation. Perfect for elegant, cohesive designs with a unified feel.',
       harmonyType: 'monochromatic' as HarmonyType,
-      exampleColor: '#3b82f6',
+      exampleColor: baseColor,
     },
     {
       title: 'Analogous',
       description: 'Uses colors that are adjacent on the color wheel. Creates harmonious, comfortable designs that are pleasing to the eye.',
       harmonyType: 'analogous' as HarmonyType,
-      exampleColor: '#10b981',
+      exampleColor: baseColor,
     },
     {
       title: 'Complementary',
       description: 'Uses colors opposite each other on the color wheel. Creates high contrast and vibrant, energetic designs.',
       harmonyType: 'complementary' as HarmonyType,
-      exampleColor: '#f59e0b',
+      exampleColor: baseColor,
     },
     {
       title: 'Triadic',
       description: 'Uses three colors evenly spaced around the color wheel. Provides vibrant contrast while remaining balanced.',
       harmonyType: 'triadic' as HarmonyType,
-      exampleColor: '#ef4444',
+      exampleColor: baseColor,
     },
     {
       title: 'Tetradic',
       description: 'Uses four colors arranged into two complementary pairs. Offers rich color diversity with many variations.',
       harmonyType: 'tetradic' as HarmonyType,
-      exampleColor: '#8b5cf6',
+      exampleColor: baseColor,
     },
     {
       title: 'Rainbow',
       description: 'Uses colors spread across the entire spectrum. Creates vibrant, energetic palettes perfect for playful designs.',
       harmonyType: 'rainbow' as HarmonyType,
-      exampleColor: '#ec4899',
+      exampleColor: baseColor,
     },
   ];
 
