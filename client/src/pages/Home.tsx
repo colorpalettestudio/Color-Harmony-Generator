@@ -6,6 +6,7 @@ import PaletteDisplay from '@/components/PaletteDisplay';
 import PaletteSizeControl from '@/components/PaletteSizeControl';
 import LightnessControl from '@/components/LightnessControl';
 import ThemeToggle from '@/components/ThemeToggle';
+import ColorHarmonyGuide from '@/components/ColorHarmonyGuide';
 import { generateHarmonyColors, getHarmonyHues } from '@/lib/colorHarmony';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -137,8 +138,11 @@ export default function Home() {
 
   const tryRandomColor = () => {
     const randomColor = chroma.random().hex();
-    setSelectedColor(randomColor);
-    scrollToGenerator();
+    handleColorChange(randomColor);
+  };
+
+  const resetToDefault = () => {
+    handleColorChange('#fc3649');
   };
 
   return (
@@ -227,6 +231,26 @@ export default function Home() {
                   harmonyHues={harmonyHues}
                   lightness={selectedHarmony === 'monochromatic' ? (chroma(selectedColor).hsl()[2] || 0.5) * 100 : actualLightness}
                 />
+                
+                {/* Quick Actions */}
+                <div className="flex gap-2 w-full max-w-xs">
+                  <Button
+                    variant="outline"
+                    className="flex-1"
+                    onClick={tryRandomColor}
+                    data-testid="button-random-color"
+                  >
+                    Random Color
+                  </Button>
+                  <Button
+                    variant="outline"
+                    className="flex-1"
+                    onClick={resetToDefault}
+                    data-testid="button-reset-color"
+                  >
+                    Reset
+                  </Button>
+                </div>
               </div>
 
               <div className="space-y-4">
@@ -242,8 +266,15 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Right Panel - Palette + Harmony Selector */}
+            {/* Right Panel - Harmony Selector + Palette */}
             <div className="lg:col-span-3 space-y-6">
+              <div>
+                <HarmonySelector
+                  selectedHarmony={selectedHarmony}
+                  onHarmonyChange={handleHarmonyChange}
+                />
+              </div>
+
               <div>
                 <PaletteDisplay
                   colors={generatedColors}
@@ -252,13 +283,6 @@ export default function Home() {
                   onPaletteSizeChange={setPaletteSize}
                   minSize={2}
                   maxSize={8}
-                />
-              </div>
-
-              <div>
-                <HarmonySelector
-                  selectedHarmony={selectedHarmony}
-                  onHarmonyChange={handleHarmonyChange}
                 />
               </div>
             </div>
@@ -314,6 +338,9 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* Color Harmony Guide Section */}
+      <ColorHarmonyGuide />
 
       {/* FAQ Section */}
       <section className="border-b border-border">
