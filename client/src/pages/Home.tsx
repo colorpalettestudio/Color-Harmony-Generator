@@ -290,6 +290,9 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Color Harmony Guide Section */}
+      <ColorHarmonyGuide baseColor={selectedColor} />
+
       {/* What It Is Section */}
       <section className="border-b border-border bg-muted/30">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -338,9 +341,6 @@ export default function Home() {
           </div>
         </div>
       </section>
-
-      {/* Color Harmony Guide Section */}
-      <ColorHarmonyGuide baseColor={selectedColor} />
 
       {/* Color Palette Fixer Advertisement */}
       <section className="py-16">
