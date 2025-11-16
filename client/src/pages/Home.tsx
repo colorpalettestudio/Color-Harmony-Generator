@@ -20,6 +20,7 @@ export default function Home() {
   const [paletteSize, setPaletteSize] = useState(4);
   const [colorLightness, setColorLightness] = useState(50);
   const [wheelSize, setWheelSize] = useState(240);
+  const [colorHistory, setColorHistory] = useState<string[]>([]);
 
   useEffect(() => {
     const handleResize = () => {
@@ -41,6 +42,20 @@ export default function Home() {
       return () => window.removeEventListener('resize', handleResize);
     }
   }, []);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === 'z') {
+        e.preventDefault();
+        undoColorChange();
+      }
+    };
+
+    if (typeof window !== 'undefined') {
+      window.addEventListener('keydown', handleKeyDown);
+      return () => window.removeEventListener('keydown', handleKeyDown);
+    }
+  }, [colorHistory]);
 
   const actualLightness = 110 - colorLightness;
   
@@ -138,8 +153,18 @@ export default function Home() {
   };
 
   const tryRandomColor = () => {
+    setColorHistory(prev => [...prev, selectedColor]);
     const randomColor = chroma.random().hex();
     handleColorChange(randomColor);
+  };
+
+  const undoColorChange = () => {
+    if (colorHistory.length > 0) {
+      const previousColor = colorHistory[colorHistory.length - 1];
+      setColorHistory(prev => prev.slice(0, -1));
+      handleColorChange(previousColor);
+      console.log('Undo to color:', previousColor);
+    }
   };
 
   const resetToDefault = () => {

@@ -2,7 +2,7 @@
 
 ## Overview
 
-Palette Pro is a professional color palette generator application designed for graphic designers and creative professionals. The application provides an interactive color wheel interface for selecting base colors and generating harmonious color palettes using various color theory rules (monochromatic, analogous, complementary, triadic, split-complementary, and tetradic). Users can manipulate color properties, adjust lightness levels, copy colors to clipboard, and utilize modern browser features like the EyeDropper API for color picking.
+Palette Pro is a professional color palette generator application designed for graphic designers and creative professionals. The application provides an interactive color wheel interface for selecting base colors and generating harmonious color palettes using various color theory rules (monochromatic, analogous, complementary, triadic, split-complementary, and tetradic). Users can manipulate color properties, adjust lightness levels, copy colors to clipboard, and utilize modern browser features like the EyeDropper API for color picking. The application includes a color history undo feature (Cmd+Z / Ctrl+Z) that allows users to navigate back through randomly generated colors.
 
 ## User Preferences
 
@@ -86,3 +86,13 @@ The project includes comprehensive development tooling:
 - **EyeDropper API** - Modern browser API for picking colors from the screen (Chrome/Edge support)
 - **Clipboard API** - For copying color values to user's clipboard
 - **CSS Custom Properties** - For dynamic theming and color system implementation
+- **Keyboard Event API** - Handles Cmd+Z / Ctrl+Z keyboard shortcuts for color history undo functionality
+
+## Recent Changes
+
+### November 16, 2025 - Color History Undo Feature
+- Implemented color history stack that tracks random color generation
+- Added keyboard shortcut support (Cmd+Z on Mac, Ctrl+Z on Windows/Linux) for undoing color changes
+- Users can now navigate back through previously generated random colors
+- History is preserved during the session and resets on page refresh
+- Prevents browser's default undo behavior to ensure smooth color navigation
