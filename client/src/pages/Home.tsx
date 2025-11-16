@@ -151,10 +151,7 @@ export default function Home() {
       {/* Header */}
       <header className="border-b border-border">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            <div className="flex items-center gap-2">
-              <h1 className="text-xl sm:text-2xl font-semibold text-foreground">Color Harmony Generator</h1>
-            </div>
+          <div className="flex items-center justify-end h-16">
             <ThemeToggle />
           </div>
         </div>
@@ -164,7 +161,7 @@ export default function Home() {
       <section className="border-b border-border">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 text-center">
           <div className="mb-6">
-            <Badge variant="secondary" className="mb-4" data-testid="badge-free">
+            <Badge variant="secondary" className="mb-4 text-base px-4 py-2" data-testid="badge-free">
               Free, Instant & No Sign-Up
             </Badge>
             <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-foreground mb-4">
