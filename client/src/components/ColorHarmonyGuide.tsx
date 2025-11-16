@@ -1,6 +1,7 @@
 import { Card, CardContent } from '@/components/ui/card';
 import { generateHarmonyColors } from '@/lib/colorHarmony';
 import type { HarmonyType } from './HarmonySelector';
+import HarmonyColorWheel from './HarmonyColorWheel';
 
 interface HarmonyExampleProps {
   title: string;
@@ -21,16 +22,27 @@ function HarmonyExample({ title, description, harmonyType, exampleColor }: Harmo
             <p className="text-sm text-muted-foreground">{description}</p>
           </div>
           
-          {/* Color Palette Preview */}
-          <div className="flex gap-2 h-20">
-            {colors.map((color, index) => (
-              <div
-                key={index}
-                className="flex-1 rounded-md border border-border"
-                style={{ backgroundColor: color }}
-                data-testid={`palette-color-${index}`}
+          <div className="flex gap-4 items-center">
+            {/* Color Wheel Preview */}
+            <div className="flex-shrink-0">
+              <HarmonyColorWheel
+                baseColor={exampleColor}
+                harmonyType={harmonyType}
+                size={120}
               />
-            ))}
+            </div>
+            
+            {/* Color Palette Preview */}
+            <div className="flex-1 flex gap-2 h-20">
+              {colors.map((color, index) => (
+                <div
+                  key={index}
+                  className="flex-1 rounded-md border border-border"
+                  style={{ backgroundColor: color }}
+                  data-testid={`palette-color-${index}`}
+                />
+              ))}
+            </div>
           </div>
         </div>
       </CardContent>
