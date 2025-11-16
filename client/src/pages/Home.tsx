@@ -10,8 +10,9 @@ import ColorHarmonyGuide from '@/components/ColorHarmonyGuide';
 import { generateHarmonyColors, getHarmonyHues } from '@/lib/colorHarmony';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Sparkles } from 'lucide-react';
+import { Sparkles, Check, ArrowRight } from 'lucide-react';
 import chroma from 'chroma-js';
+import paletteFixerImage from '@assets/Color Palette FIXER Product Photos (3)_1763312614628.png';
 
 export default function Home() {
   const [selectedColor, setSelectedColor] = useState('#fc3649');
@@ -418,11 +419,111 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Color Palette Fixer Advertisement */}
+      <section className="bg-gradient-to-r from-sky-100 to-sky-200 dark:from-sky-950 dark:to-sky-900">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+          <div className="flex flex-col lg:flex-row items-center gap-8 lg:gap-12">
+            {/* Product Image */}
+            <div className="flex-shrink-0 w-full lg:w-1/2">
+              <img
+                src={paletteFixerImage}
+                alt="Color Palette Fixer Product Screenshot"
+                className="rounded-lg shadow-lg w-full"
+                data-testid="img-palette-fixer"
+              />
+            </div>
+
+            {/* Content */}
+            <div className="flex-1 text-center lg:text-left">
+              <h2 className="text-3xl sm:text-4xl font-bold text-foreground mb-4">
+                Ready to fix your color palette in 60 seconds?
+              </h2>
+              <p className="text-xl text-muted-foreground mb-6">
+                The Color Palette Fixer uses math, not AI.
+              </p>
+
+              <ul className="space-y-3 mb-8">
+                <li className="flex items-center justify-center lg:justify-start gap-3">
+                  <Check className="w-5 h-5 text-green-600 dark:text-green-400 flex-shrink-0" />
+                  <span className="text-foreground">Diagnoses harmony, saturation & contrast issues</span>
+                </li>
+                <li className="flex items-center justify-center lg:justify-start gap-3">
+                  <Check className="w-5 h-5 text-green-600 dark:text-green-400 flex-shrink-0" />
+                  <span className="text-foreground">One-click fixes in 60 seconds</span>
+                </li>
+                <li className="flex items-center justify-center lg:justify-start gap-3">
+                  <Check className="w-5 h-5 text-green-600 dark:text-green-400 flex-shrink-0" />
+                  <span className="text-foreground">Export fixed palettes instantly</span>
+                </li>
+              </ul>
+
+              <a
+                href="https://thecolorpalettestudio.com/products/color-palette-fixer"
+                target="_blank"
+                rel="noopener noreferrer"
+                data-testid="link-palette-fixer-cta"
+              >
+                <Button
+                  size="lg"
+                  className="bg-black text-white hover:bg-black/90 dark:bg-white dark:text-black dark:hover:bg-white/90"
+                >
+                  Fix Your Color Palette
+                  <ArrowRight className="ml-2 w-4 h-4" />
+                </Button>
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Footer */}
-      <footer className="bg-card">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="text-center text-sm text-muted-foreground">
-            <p>Color Harmony Generator - Free color palette tool for designers and developers</p>
+      <footer className="bg-card border-t border-border">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-muted-foreground">
+            <div className="flex items-center gap-1">
+              <span>Made with</span>
+              <span className="text-red-500">❤️</span>
+              <span>by</span>
+              <a
+                href="https://thecolorpalettestudio.com/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-foreground hover:underline"
+                data-testid="link-footer-studio"
+              >
+                The Color Palette Studio
+              </a>
+            </div>
+            
+            <div className="flex items-center gap-6">
+              <a
+                href="https://thecolorpalettestudio.com/policies/privacy-policy"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:text-foreground transition-colors"
+                data-testid="link-footer-privacy"
+              >
+                Privacy
+              </a>
+              <a
+                href="https://thecolorpalettestudio.com/policies/terms-of-service"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:text-foreground transition-colors"
+                data-testid="link-footer-terms"
+              >
+                Terms
+              </a>
+              <a
+                href="https://thecolorpalettestudio.com/pages/contact"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:text-foreground transition-colors"
+                data-testid="link-footer-contact"
+              >
+                Contact
+              </a>
+            </div>
           </div>
         </div>
       </footer>
