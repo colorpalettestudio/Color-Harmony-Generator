@@ -168,7 +168,7 @@ export default function Home() {
               Free, Instant & No Sign-Up
             </Badge>
             <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-foreground mb-4">
-              Create Color Harmony in Seconds
+              Create Balanced and Harmonized Color Palettes in Seconds
             </h2>
             <p className="text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto">
               Generate perfectly balanced color palettes using color harmony formulas, not AI. Built on proven color theory—choose from monochromatic, complementary, triadic, and more.
