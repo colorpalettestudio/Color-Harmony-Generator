@@ -260,7 +260,7 @@ export default function Home() {
                   displayValue={actualLightness}
                 />
                 <ColorInput
-                  value={selectedColor}
+                  value={adjustedSelectedColor}
                   onChange={handleColorChange}
                 />
               </div>
