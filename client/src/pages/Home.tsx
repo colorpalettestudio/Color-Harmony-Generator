@@ -384,41 +384,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Related Tools Section */}
-      <section className="border-b border-border bg-muted/30">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          <h2 className="text-2xl font-bold text-foreground mb-6">
-            Explore More Color Tools
-          </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-            <a
-              href="https://www.thecolorcodeconverter.com/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="block p-6 border border-border rounded-lg hover-elevate active-elevate-2 bg-background"
-              data-testid="link-color-converter"
-            >
-              <h3 className="text-lg font-semibold mb-2">Color Code Converter</h3>
-              <p className="text-sm text-muted-foreground">
-                Convert HEX, RGB, and HSL values instantly
-              </p>
-            </a>
-            <a
-              href="https://www.colorpalettetester.com/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="block p-6 border border-border rounded-lg hover-elevate active-elevate-2 bg-background"
-              data-testid="link-palette-tester"
-            >
-              <h3 className="text-lg font-semibold mb-2">Color Palette Tester</h3>
-              <p className="text-sm text-muted-foreground">
-                Test color contrast for WCAG accessibility
-              </p>
-            </a>
-          </div>
-        </div>
-      </section>
-
       {/* Color Palette Fixer Advertisement */}
       <section className="bg-gradient-to-r from-sky-100 to-sky-200 dark:from-sky-950 dark:to-sky-900">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
