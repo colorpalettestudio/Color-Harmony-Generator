@@ -68,3 +68,16 @@ The app is optimized for production:
 ## Domain Setup (Optional)
 
 After deployment, you can add a custom domain in your Vercel project settings.
+
+## Important: Update Social Share Images
+
+After deploying to production, you need to update the Open Graph and Twitter Card image URLs in `client/index.html` to use absolute URLs:
+
+1. Find your deployed URL (e.g., `https://yourapp.vercel.app`)
+2. Update these meta tags in `client/index.html`:
+   ```html
+   <meta property="og:image" content="https://yourapp.vercel.app/social-share.png">
+   <meta name="twitter:image" content="https://yourapp.vercel.app/social-share.png">
+   ```
+
+Social media platforms require absolute URLs for images to display previews correctly.
