@@ -167,11 +167,11 @@ export default function Home() {
             <Badge variant="secondary" className="mb-4" data-testid="badge-free">
               Free, Instant & No Sign-Up
             </Badge>
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground mb-4">
-              Generate Perfect Color Palettes Instantly
+            <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-foreground mb-4">
+              Create Color Harmony in Seconds
             </h2>
             <p className="text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto">
-              Pick a base color and generate harmonious palettes using proven color theory rules. Copy colors instantly, adjust lightness, and create beautiful designs.
+              Generate perfectly balanced color palettes using color harmony formulas, not AI. Built on proven color theory—choose from monochromatic, complementary, triadic, and more.
             </p>
           </div>
           
@@ -343,47 +343,6 @@ export default function Home() {
       {/* Color Harmony Guide Section */}
       <ColorHarmonyGuide />
 
-      {/* FAQ Section */}
-      <section className="border-b border-border">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          <h2 className="text-2xl sm:text-3xl font-bold text-foreground mb-8">
-            Color Harmony Generator: FAQ
-          </h2>
-          <div className="space-y-6">
-            <div>
-              <h3 className="text-lg font-semibold mb-2">What harmony rules are available?</h3>
-              <p className="text-muted-foreground">
-                The tool offers 6 harmony rules: Monochromatic (same hue, different lightness), Analogous (adjacent colors), Complementary (opposite colors), Triadic (three evenly spaced), Tetradic (four evenly spaced), and Rainbow (spectrum colors).
-              </p>
-            </div>
-            <div>
-              <h3 className="text-lg font-semibold mb-2">Can I adjust the number of colors?</h3>
-              <p className="text-muted-foreground">
-                Yes. You can generate between 2-8 colors in your palette. Each harmony rule has a recommended default size, but you can adjust it to fit your needs.
-              </p>
-            </div>
-            <div>
-              <h3 className="text-lg font-semibold mb-2">How do I copy colors?</h3>
-              <p className="text-muted-foreground">
-                Click any color swatch in the generated palette to copy it to your clipboard. You can copy individual colors or the entire palette at once. Colors are available in HEX, RGB, and HSL formats.
-              </p>
-            </div>
-            <div>
-              <h3 className="text-lg font-semibold mb-2">What is the eyedropper tool?</h3>
-              <p className="text-muted-foreground">
-                The eyedropper tool lets you pick any color from your screen to use as your base color. It works in modern browsers like Chrome and Edge.
-              </p>
-            </div>
-            <div>
-              <h3 className="text-lg font-semibold mb-2">Is the tool free?</h3>
-              <p className="text-muted-foreground">
-                Yes. The Color Harmony Generator is completely free and works without sign-up or registration.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
       {/* Color Palette Fixer Advertisement */}
       <section className="py-16">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -438,6 +397,47 @@ export default function Home() {
                   </Button>
                 </a>
               </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* FAQ Section */}
+      <section className="border-b border-border">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+          <h2 className="text-2xl sm:text-3xl font-bold text-foreground mb-8">
+            Color Harmony Generator: FAQ
+          </h2>
+          <div className="space-y-6">
+            <div>
+              <h3 className="text-lg font-semibold mb-2">What harmony rules are available?</h3>
+              <p className="text-muted-foreground">
+                The tool offers 6 harmony rules: Monochromatic (same hue, different lightness), Analogous (adjacent colors), Complementary (opposite colors), Triadic (three evenly spaced), Tetradic (four evenly spaced), and Rainbow (spectrum colors).
+              </p>
+            </div>
+            <div>
+              <h3 className="text-lg font-semibold mb-2">Can I adjust the number of colors?</h3>
+              <p className="text-muted-foreground">
+                Yes. You can generate between 2-8 colors in your palette. Each harmony rule has a recommended default size, but you can adjust it to fit your needs.
+              </p>
+            </div>
+            <div>
+              <h3 className="text-lg font-semibold mb-2">How do I copy colors?</h3>
+              <p className="text-muted-foreground">
+                Click any color swatch in the generated palette to copy it to your clipboard. You can copy individual colors or the entire palette at once. Colors are available in HEX, RGB, and HSL formats.
+              </p>
+            </div>
+            <div>
+              <h3 className="text-lg font-semibold mb-2">What is the eyedropper tool?</h3>
+              <p className="text-muted-foreground">
+                The eyedropper tool lets you pick any color from your screen to use as your base color. It works in modern browsers like Chrome and Edge.
+              </p>
+            </div>
+            <div>
+              <h3 className="text-lg font-semibold mb-2">Is the tool free?</h3>
+              <p className="text-muted-foreground">
+                Yes. The Color Harmony Generator is completely free and works without sign-up or registration.
+              </p>
             </div>
           </div>
         </div>
