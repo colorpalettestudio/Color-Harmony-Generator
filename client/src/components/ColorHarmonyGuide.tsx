@@ -50,9 +50,12 @@ function HarmonyExample({ title, description, harmonyType, exampleColor }: Harmo
   );
 }
 
-export default function ColorHarmonyGuide() {
-  // Use the same base color for all examples to make comparisons easier
-  const baseColor = '#3b82f6';
+interface ColorHarmonyGuideProps {
+  baseColor?: string;
+}
+
+export default function ColorHarmonyGuide({ baseColor = '#3b82f6' }: ColorHarmonyGuideProps) {
+  // Use the user's selected color for all examples to make comparisons easier
   
   const harmonyExamples = [
     {

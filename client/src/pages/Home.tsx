@@ -340,7 +340,7 @@ export default function Home() {
       </section>
 
       {/* Color Harmony Guide Section */}
-      <ColorHarmonyGuide />
+      <ColorHarmonyGuide baseColor={selectedColor} />
 
       {/* Color Palette Fixer Advertisement */}
       <section className="py-16">
