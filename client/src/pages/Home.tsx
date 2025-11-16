@@ -149,10 +149,12 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="border-b border-border">
+      <header className="border-b border-border" style={{ backgroundColor: selectedColor }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-end h-16">
-            <ThemeToggle />
+            <div className="bg-background/90 backdrop-blur-sm rounded-full p-1">
+              <ThemeToggle />
+            </div>
           </div>
         </div>
       </header>
