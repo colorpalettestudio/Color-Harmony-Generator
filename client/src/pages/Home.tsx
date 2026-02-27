@@ -188,9 +188,6 @@ export default function Home() {
       <section className="border-b border-border">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 text-center">
           <div className="mb-6">
-            <Badge variant="secondary" className="mb-4 text-base px-4 py-2" data-testid="badge-free">
-              Free, Instant & No Sign-Up
-            </Badge>
             <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-foreground mb-4">
               The Color Harmony Generator
             </h2>
@@ -222,7 +219,7 @@ export default function Home() {
           <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-6 text-sm text-muted-foreground">
             <div className="flex items-center gap-2">
               <span className="text-lg">✓</span>
-              <span>Free & Instant</span>
+              <span>Instant Results</span>
             </div>
             <div className="flex items-center gap-2">
               <span className="text-lg">✓</span>
@@ -230,7 +227,7 @@ export default function Home() {
             </div>
             <div className="flex items-center gap-2">
               <span className="text-lg">✓</span>
-              <span>No Sign-Up Required</span>
+              <span>Built on Color Theory</span>
             </div>
           </div>
         </div>
@@ -322,11 +319,11 @@ export default function Home() {
       <section className="border-b border-border bg-muted/30">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <h2 className="text-2xl sm:text-3xl font-bold text-foreground mb-6">
-            Free Color Harmony Generator
+            Color Harmony Generator
           </h2>
           <div className="space-y-4 text-muted-foreground">
             <p>
-              The Color Harmony Generator is a free, fast tool for designers, developers, and brand owners to create professional color palettes using color theory. Select a base color and instantly generate harmonious combinations based on proven rules like analogous, complementary, triadic, and more.
+              The Color Harmony Generator is a fast tool for designers, developers, and brand owners to create professional color palettes using color theory. Select a base color and instantly generate harmonious combinations based on proven rules like analogous, complementary, triadic, and more.
             </p>
             <p>
               Unlike basic color pickers, this tool applies real color theory to create palettes that actually work together. Adjust lightness, copy values instantly, and generate 2-8 color palettes for any design project.
@@ -455,12 +452,6 @@ export default function Home() {
               <h3 className="text-lg font-semibold mb-2">What is the eyedropper tool?</h3>
               <p className="text-muted-foreground">
                 The eyedropper tool lets you pick any color from your screen to use as your base color. It works in modern browsers like Chrome and Edge.
-              </p>
-            </div>
-            <div>
-              <h3 className="text-lg font-semibold mb-2">Is the tool free?</h3>
-              <p className="text-muted-foreground">
-                Yes. The Color Harmony Generator is completely free and works without sign-up or registration.
               </p>
             </div>
           </div>
