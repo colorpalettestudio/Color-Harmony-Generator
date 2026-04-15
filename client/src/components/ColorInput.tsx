@@ -63,6 +63,14 @@ export default function ColorInput({ value, onChange }: ColorInputProps) {
     }
   };
 
+  // Expand a 3-char hex to 6-char without going through chroma (avoids floating-point drift)
+  const expandHex = (hex: string): string => {
+    if (hex.length === 4) {
+      return '#' + hex[1] + hex[1] + hex[2] + hex[2] + hex[3] + hex[3];
+    }
+    return hex;
+  };
+
   const handleHexChange = (hex: string) => {
     // Always update the local state immediately for responsive typing
     setHexValue(hex);
@@ -79,19 +87,9 @@ export default function ColorInput({ value, onChange }: ColorInputProps) {
     const validHexPattern = /^#[0-9a-f]{3}$|^#[0-9a-f]{6}$/;
     
     if (cleanHex.match(validHexPattern)) {
-      try {
-        // Let chroma handle the conversion (it supports 3-char hex)
-        const color = chroma(cleanHex);
-        const fullHex = color.hex();
-        onChange(fullHex);
-        console.log('Color input changed to:', fullHex);
-        
-        // Don't auto-format while user is still typing
-        // Only format when they blur or complete a valid hex
-      } catch (error) {
-        // Invalid color even though it matched pattern
-        console.log('Invalid hex color:', cleanHex);
-      }
+      // Pass the user's exact hex directly — no chroma conversion to avoid floating-point drift
+      const fullHex = expandHex(cleanHex);
+      onChange(fullHex);
     }
   };
 
@@ -112,27 +110,18 @@ export default function ColorInput({ value, onChange }: ColorInputProps) {
       const validHexPattern = /^#[0-9a-f]{3}$|^#[0-9a-f]{6}$/;
       
       if (cleanHex.match(validHexPattern)) {
-        const color = chroma(cleanHex);
-        const fullHex = color.hex().toLowerCase();
-        setHexValue(fullHex); // Format to full 6-character hex
+        // Expand 3-char hex if needed, but don't pass through chroma
+        const fullHex = expandHex(cleanHex);
+        setHexValue(fullHex);
         
-        // Make sure the color is applied
         if (fullHex !== value.toLowerCase()) {
           onChange(fullHex);
-          console.log('Color input formatted and changed to:', fullHex);
         }
       }
     } catch (error) {
       // If invalid, revert to current value
-      try {
-        const color = chroma(value);
-        setHexValue(color.hex().toLowerCase());
-      } catch {
-        // Last resort
-        setHexValue('#000000');
-      }
+      setHexValue(value.toLowerCase());
     } finally {
-      // Always stop editing on blur
       setIsEditing(false);
     }
   };
