@@ -21,6 +21,7 @@ export default function Home() {
   const [colorLightness, setColorLightness] = useState(50);
   const [wheelSize, setWheelSize] = useState(240);
   const [colorHistory, setColorHistory] = useState<string[]>([]);
+  const [lightnessManuallyAdjusted, setLightnessManuallyAdjusted] = useState(false);
 
   useEffect(() => {
     const handleResize = () => {
@@ -60,6 +61,9 @@ export default function Home() {
   const actualLightness = 110 - colorLightness;
   
   const adjustedSelectedColor = (() => {
+    if (!lightnessManuallyAdjusted) {
+      return selectedColor;
+    }
     try {
       const hsl = chroma(selectedColor).hsl();
       return chroma.hsl(hsl[0] || 0, hsl[1] || 0, actualLightness / 100).hex();
@@ -95,6 +99,7 @@ export default function Home() {
 
   const handleColorChange = (color: string) => {
     setSelectedColor(color);
+    setLightnessManuallyAdjusted(false);
     
     try {
       const inputColor = chroma(color);
@@ -106,6 +111,11 @@ export default function Home() {
     } catch {
       console.log('Base color changed to:', color);
     }
+  };
+
+  const handleLightnessChange = (value: number) => {
+    setColorLightness(value);
+    setLightnessManuallyAdjusted(true);
   };
 
   const getDefaultPaletteSize = (harmony: HarmonyType): number => {
@@ -278,7 +288,7 @@ export default function Home() {
               <div className="space-y-4">
                 <LightnessControl
                   value={colorLightness}
-                  onChange={setColorLightness}
+                  onChange={handleLightnessChange}
                   displayValue={actualLightness}
                 />
                 <ColorInput
